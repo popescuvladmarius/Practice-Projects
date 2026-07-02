@@ -14,9 +14,10 @@ int randomGen(int min, int max) {
 	std::uniform_int_distribution<int> dist(min, max);
 	return dist(random);
 }
-void writeBoard(const std::vector<Pos>& cache, Snake& snake, Board& board) {
+void writeBoard(Snake& snake, Board& board) {
 	board.setBoard(snake.getHeadGraphics(), snake.getHeadPosition());
-	for (const auto& a : cache) {
+	for (const auto& a : snake.readCache()) {
 		board.setBoard(snake.getTailGraphics(), a);
 	}
+	board.setBoard(board.getGrassGraphics(), snake.getTrailPosition());
 }

@@ -24,7 +24,7 @@ int main()
         snake.movementCorrector();
         snake.addCache();
         snake.updateCache();
-        
+        writeBoard(snake, board);
         
 
     }

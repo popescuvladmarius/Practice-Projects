@@ -76,6 +76,12 @@ public:
 		tailPos.y = tailY;
 		return tailPos;
 	}
+	Pos getTrailPosition() {
+		return trail;
+	}
+	const std::vector<Pos>& readCache() {
+		return cache;
+	}
 	char getHeadGraphics() { return snakeHead; }
 	char getTailGraphics() { return snakeTail; }
 	int boundsCheck(int x) {
@@ -264,7 +270,9 @@ public:
 			}
 		}
 	}
-	const std::array<std::array<char, 20>, 20>& getBoard() const{ return board; }
+	char getGrassGraphics() {
+		return grass;
+	}
 	void setBoard(char graphics, Pos location) {
 		board[location.x][location.y] = graphics;
 	}
