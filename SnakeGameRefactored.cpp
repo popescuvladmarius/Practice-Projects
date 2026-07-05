@@ -25,9 +25,12 @@ int main()
         snake.addCache();
         snake.updateCache();
         writeBoard(snake, board);
-        
-
+        if (snake.selfCollisionCheck()) {
+            gamestate.setGameState(true);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(150));
     }
+    std::cout << "Game Over!" << '\n';
 
     return 0;
 }

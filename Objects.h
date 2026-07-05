@@ -4,7 +4,7 @@
 #include <array>
 #include <windows.h>
 #include <conio.h>
-#include "FunctionDeclarations.h"
+
 
 struct Pos {
 	int x{};
@@ -47,22 +47,6 @@ public:
 		tailY = 8;
 		cache.reserve(400);
 	}
-	void setHeadX(int x) {
-		headX = x;
-	}
-	void setHeadY(int y) {
-		headY = y;
-	}
-	void setTailX(int x) {
-		tailX = x;
-	}
-	void setTailY(int y) {
-		tailY = y;
-	}
-	int getHeadX() const { return headX; }
-	int getHeadY() const { return headY; }
-	int getTailX() const { return tailX; }
-	int getTailY() const { return tailY; }
 	void addSnakeLength() {
 		++snakeLength;
 	}
@@ -256,6 +240,14 @@ public:
 		}
 		cache[0] = getTailPosition();
 	}
+	bool selfCollisionCheck() {
+		for (const auto& a : cache) {
+			if (a.x == headX && a.y == headY) {
+				return true;
+			}
+		}
+		return false;
+	}
 };
 
 class Board {
@@ -292,8 +284,13 @@ public:
 class Food {
 private:
 	char food{ '$' };
+	Pos foodPos{};
 public:
-
+	Pos getFoodPosition() { return foodPos; }
+	Pos spawnFood() {
+		foodPos.x = randomGen(0, 19);
+		foodPos.y = randomGen(0, 19);
+	}
 };
 
 class Gamestate {

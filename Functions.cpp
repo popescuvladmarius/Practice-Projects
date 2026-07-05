@@ -8,6 +8,7 @@
 #include <random>
 #include <algorithm>
 #include "Objects.h"
+#include "FunctionDeclarations.h"
 
 int randomGen(int min, int max) {
 	static std::mt19937 random{ std::random_device{}() };
@@ -20,4 +21,10 @@ void writeBoard(Snake& snake, Board& board) {
 		board.setBoard(snake.getTailGraphics(), a);
 	}
 	board.setBoard(board.getGrassGraphics(), snake.getTrailPosition());
+}
+bool collisionCheck(Snake& snake, Food& food) {
+	if (snake.getHeadPosition().x == food.getFoodPosition().x && snake.getHeadPosition().y == food.getFoodPosition().y) {
+		return true;
+	}
+	return false;
 }
