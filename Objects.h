@@ -4,11 +4,12 @@
 #include <array>
 #include <windows.h>
 #include <conio.h>
-
+#include "FunctionDeclarations.h"
 
 struct Pos {
 	int x{};
 	int y{};
+	bool operator==(const Pos&) const = default;
 };
 
 enum Direction {
@@ -17,7 +18,6 @@ enum Direction {
 	down,
 	left,
 	right,
-	quit
 };
 
 class Snake {
@@ -25,10 +25,6 @@ private:
 	char snakeHead{ 'O' };
 	char snakeTail{ 'o' };
 	int snakeLength{};
-	int headX{};
-	int headY{};
-	int tailX{};
-	int tailY{};
 	Pos headPos{};
 	Pos tailPos{};
 	Pos trail{};
@@ -36,38 +32,35 @@ private:
 	Direction direction{ right };
 	Direction directionCheck{ direction };
 	Direction prevDirection{};
+	bool quit{ false };
 public:
 	Snake(int length) :
-		snakeLength{ length }
+		snakeLength{ clampLength(length) }
 	{
-
-		headX = 9;
-		headY = 9;
-		tailX = 8;
-		tailY = 8;
+		headPos.x = 9;
+		headPos.y = 9;
+		tailPos.x = 9;
+		tailPos.y = 8;
 		cache.reserve(400);
+	}
+	int clampLength(int length) {
+		if (length < 1) { return 1; }
+		if (length > 400) { return 400; }
+		return length;
 	}
 	void addSnakeLength() {
 		++snakeLength;
 	}
-	Pos getHeadPosition() {
-		headPos.x = headX;
-		headPos.y = headY;
-		return headPos;
-	}
-	Pos getTailPosition() {
-		tailPos.x = tailX;
-		tailPos.y = tailY;
-		return tailPos;
-	}
-	Pos getTrailPosition() {
-		return trail;
-	}
-	const std::vector<Pos>& readCache() {
+	bool getQuitState() const { return quit; }
+	int getSnakeLength() const { return snakeLength; }
+	Pos getHeadPosition() const { return headPos; }
+	Pos getTailPosition() const { return tailPos; }
+	Pos getTrailPosition() const { return trail; }
+	const std::vector<Pos>& readCache() const {
 		return cache;
 	}
-	char getHeadGraphics() { return snakeHead; }
-	char getTailGraphics() { return snakeTail; }
+	char getHeadGraphics() const { return snakeHead; }
+	char getTailGraphics() const { return snakeTail; }
 	int boundsCheck(int x) {
 		if (x < 0) {
 			x = 19;
@@ -115,7 +108,7 @@ public:
 				}
 				break;
 			case 'x':
-				direction = quit;
+				quit = true;
 				break;
 			}
 		}
@@ -133,28 +126,28 @@ public:
 	void movement() {
 		switch (direction) {
 		case up:
-			--headX;
-			headX = boundsCheck(headX);
-			--tailX;
-			tailX = boundsCheck(tailX);
+			--headPos.x;
+			headPos.x = boundsCheck(headPos.x);
+			--tailPos.x;
+			tailPos.x = boundsCheck(tailPos.x);
 			break;
 		case down:
-			++headX;
-			headX = boundsCheck(headX);
-			++tailX;
-			tailX = boundsCheck(tailX);
+			++headPos.x;
+			headPos.x = boundsCheck(headPos.x);
+			++tailPos.x;
+			tailPos.x = boundsCheck(tailPos.x);
 			break;
 		case right:
-			++headY;
-			headY = boundsCheck(headY);
-			++tailY;
-			tailY = boundsCheck(tailY);
+			++headPos.y;
+			headPos.y = boundsCheck(headPos.y);
+			++tailPos.y;
+			tailPos.y = boundsCheck(tailPos.y);
 			break;
 		case left:
-			--headY;
-			headY = boundsCheck(headY);
-			--tailY;
-			tailY = boundsCheck(tailY);
+			--headPos.y;
+			headPos.y = boundsCheck(headPos.y);
+			--tailPos.y;
+			tailPos.y = boundsCheck(tailPos.y);
 			break;
 		}
 	}
@@ -164,64 +157,64 @@ public:
 			case up:
 				switch (prevDirection) {
 				case right:
-					++tailY;
-					tailY = boundsCheck(tailY);
-					++tailX;
-					tailX = boundsCheck(tailX);
+					++tailPos.y;
+					tailPos.y = boundsCheck(tailPos.y);
+					++tailPos.x;
+					tailPos.x = boundsCheck(tailPos.x);
 					break;
 				case left:
-					--tailY;
-					tailY = boundsCheck(tailY);
-					++tailX;
-					tailX = boundsCheck(tailX);
+					--tailPos.y;
+					tailPos.y = boundsCheck(tailPos.y);
+					++tailPos.x;
+					tailPos.x = boundsCheck(tailPos.x);
 					break;
 				}
 				break;
 			case down:
 				switch (prevDirection) {
 				case right:
-					++tailY;
-					tailY = boundsCheck(tailY);
-					--tailX;
-					tailX = boundsCheck(tailX);
+					++tailPos.y;
+					tailPos.y = boundsCheck(tailPos.y);
+					--tailPos.x;
+					tailPos.x = boundsCheck(tailPos.x);
 					break;
 				case left:
-					--tailY;
-					tailY = boundsCheck(tailY);
-					--tailX;
-					tailX = boundsCheck(tailX);
+					--tailPos.y;
+					tailPos.y = boundsCheck(tailPos.y);
+					--tailPos.x;
+					tailPos.x = boundsCheck(tailPos.x);
 					break;
 				}
 				break;
 			case right:
 				switch (prevDirection) {
 				case up:
-					--tailX;
-					tailX = boundsCheck(tailX);
-					--tailY;
-					tailY = boundsCheck(tailY);
+					--tailPos.x;
+					tailPos.x = boundsCheck(tailPos.x);
+					--tailPos.y;
+					tailPos.y = boundsCheck(tailPos.y);
 					break;
 				case down:
-					++tailX;
-					tailX = boundsCheck(tailX);
-					--tailY;
-					tailY = boundsCheck(tailY);
+					++tailPos.x;
+					tailPos.x = boundsCheck(tailPos.x);
+					--tailPos.y;
+					tailPos.y = boundsCheck(tailPos.y);
 					break;
 				}
 				break;
 			case left:
 				switch (prevDirection) {
 				case up:
-					--tailX;
-					tailX = boundsCheck(tailX);
-					++tailY;
-					tailY = boundsCheck(tailY);
+					--tailPos.x;
+					tailPos.x = boundsCheck(tailPos.x);
+					++tailPos.y;
+					tailPos.y = boundsCheck(tailPos.y);
 					break;
 				case down:
-					++tailX;
-					tailX = boundsCheck(tailX);
-					++tailY;
-					tailY = boundsCheck(tailY);
+					++tailPos.x;
+					tailPos.x = boundsCheck(tailPos.x);
+					++tailPos.y;
+					tailPos.y = boundsCheck(tailPos.y);
 					break;
 				}
 				break;
@@ -234,19 +227,11 @@ public:
 		}
 	}
 	void updateCache() {
+		trail = cache.back();
 		for (int i = cache.size() - 1; i > 0; --i) {
-			trail = cache[i];
 			cache[i] = cache[i - 1];
 		}
-		cache[0] = getTailPosition();
-	}
-	bool selfCollisionCheck() {
-		for (const auto& a : cache) {
-			if (a.x == headX && a.y == headY) {
-				return true;
-			}
-		}
-		return false;
+		cache[0] = tailPos;
 	}
 };
 
@@ -286,18 +271,74 @@ private:
 	char food{ '$' };
 	Pos foodPos{};
 public:
-	Pos getFoodPosition() { return foodPos; }
-	Pos spawnFood() {
+	void spawnFood() {
 		foodPos.x = randomGen(0, 19);
 		foodPos.y = randomGen(0, 19);
 	}
+	Pos getFoodPosition() const { return foodPos; }
+	char getFoodGraphics() const { return food; }
+};
+
+class CollisionManager {
+private:
+	const Snake* const snake_ptr;
+	const Food* const food_ptr;
+public:
+	CollisionManager(const Snake& snake, const Food& food) :
+		snake_ptr{ &snake }, food_ptr{ &food }
+	{}
+	bool selfCollisionCheck() const{
+		for (const auto& a : snake_ptr->readCache()) {
+			if (snake_ptr->getHeadPosition() == a) {
+				return true;
+			}
+		}
+		return false;
+	}
+	bool foodCollisionCheck() const {
+		if (snake_ptr->getHeadPosition() == food_ptr->getFoodPosition()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	bool foodSpawnCollisionCheck() const {
+		for (const auto& a : snake_ptr->readCache()) {
+			if (food_ptr->getFoodPosition() == a) {
+				return true;
+			}
+		}
+		if (food_ptr->getFoodPosition() == snake_ptr->getHeadPosition()) {
+			return true;
+		}
+		return false;
+	}
+
 };
 
 class Gamestate {
 private:
 	bool gameover{ false };
-	 
+	const Snake* const snake_ptr;
+	const CollisionManager* const collision_ptr;
 public:
-	bool getGameState() const { return gameover; }
-	void setGameState(bool state) { gameover = state; }
+	Gamestate(const Snake& snake, const CollisionManager& manager) : 
+		snake_ptr{ &snake }, 
+		collision_ptr{ &manager } 
+	{}
+	bool getGameState() { return gameover; }
+	void solveState() {
+		if (collision_ptr->selfCollisionCheck()) {
+			gameover = true;
+			std::cout << "Game Over!" << '\n';
+		}
+		if (snake_ptr->getQuitState()) {
+			gameover = true;
+			std::cout << "Game Over!" << '\n';
+		}
+		if (snake_ptr->getSnakeLength() >= 400) {
+			std::cout << "You won!" << '\n';
+		}
+	}
 };

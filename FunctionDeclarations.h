@@ -1,6 +1,9 @@
 #pragma once
-#include "Objects.h"
+class Snake;
+class Board;
+class Food;
+class CollisionManager;
 
 int randomGen(int min, int max);
-void writeBoard(Snake& snake, Board& board);
-bool collisionCheck(Snake& snake, Food& food);
+void writeBoard(const Snake& snake, Board& board, const Food& food);
+void foodSafeSpawn(Food& food, const CollisionManager& manager);
