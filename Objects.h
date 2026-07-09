@@ -20,58 +20,16 @@ enum Direction {
 	right,
 };
 
-class Snake {
+class Controller {
 private:
-	char snakeHead{ 'O' };
-	char snakeTail{ 'o' };
-	int snakeLength{};
-	Pos headPos{};
-	Pos tailPos{};
-	Pos trail{};
-	std::vector<Pos> cache{};
 	Direction direction{ right };
 	Direction directionCheck{ direction };
 	Direction prevDirection{};
-	bool quit{ false };
+	bool quitButton{ false };
 public:
-	Snake(int length) :
-		snakeLength{ clampLength(length) }
-	{
-		headPos.x = 9;
-		headPos.y = 9;
-		tailPos.x = 9;
-		tailPos.y = 8;
-		cache.reserve(400);
-	}
-	int clampLength(int length) {
-		if (length < 1) { return 1; }
-		if (length > 400) { return 400; }
-		return length;
-	}
-	void addSnakeLength() {
-		++snakeLength;
-	}
-	bool getQuitState() const { return quit; }
-	int getSnakeLength() const { return snakeLength; }
-	Pos getHeadPosition() const { return headPos; }
-	Pos getTailPosition() const { return tailPos; }
-	Pos getTrailPosition() const { return trail; }
-	const std::vector<Pos>& readCache() const {
-		return cache;
-	}
-	char getHeadGraphics() const { return snakeHead; }
-	char getTailGraphics() const { return snakeTail; }
-	int boundsCheck(int x) {
-		if (x < 0) {
-			x = 19;
-			return x;
-		}
-		if (x > 19) {
-			x = 0;
-			return x;
-		}
-		return x;
-	}
+	Direction getDirection() const { return direction; }
+	Direction getPrevDirection() const { return prevDirection; }
+	bool getQuitState() const { return quitButton; }
 	void input() {
 		if (_kbhit()) {
 			switch (_getch()) {
@@ -108,7 +66,7 @@ public:
 				}
 				break;
 			case 'x':
-				quit = true;
+				quitButton = true;
 				break;
 			}
 		}
@@ -123,8 +81,55 @@ public:
 			return false;
 		}
 	}
+};
+
+class Snake {
+private:
+	char snakeHead{ 'O' };
+	char snakeTail{ 'o' };
+	int snakeLength{};
+	Pos headPos{};
+	Pos tailPos{};
+	Pos trail{};
+	std::vector<Pos> cache{};
+	Controller* controller_ptr;
+public:
+	Snake(int length, Controller& controller) :
+		snakeLength{ clampLength(length) },
+		controller_ptr{ &controller }
+	{
+		headPos.x = 9;
+		headPos.y = 9;
+		tailPos.x = 9;
+		tailPos.y = 8;
+		cache.reserve(400);
+	}
+	int getSnakeLength() const { return snakeLength; }
+	Pos getHeadPosition() const { return headPos; }
+	Pos getTailPosition() const { return tailPos; }
+	Pos getTrailPosition() const { return trail; }
+	char getHeadGraphics() const { return snakeHead; }
+	char getTailGraphics() const { return snakeTail; }
+	void addSnakeLength() {
+		++snakeLength;
+	}
+	const std::vector<Pos>& readCache() const {
+		return cache;
+	}
+	void addCache() {
+		while (cache.size() < snakeLength) {
+			cache.push_back(getTailPosition());
+		}
+	}
+	void updateCache() {
+		trail = cache.back();
+		for (int i = cache.size() - 1; i > 0; --i) {
+			cache[i] = cache[i - 1];
+		}
+		cache[0] = tailPos;
+	}
 	void movement() {
-		switch (direction) {
+		switch (controller_ptr->getDirection()) {
 		case up:
 			--headPos.x;
 			headPos.x = boundsCheck(headPos.x);
@@ -152,10 +157,10 @@ public:
 		}
 	}
 	void movementCorrector() {
-		if (isDirectionChanged()) {
-			switch (direction) {
+		if (controller_ptr->isDirectionChanged()) {
+			switch (controller_ptr->getDirection()) {
 			case up:
-				switch (prevDirection) {
+				switch (controller_ptr->getPrevDirection()) {
 				case right:
 					++tailPos.y;
 					tailPos.y = boundsCheck(tailPos.y);
@@ -171,7 +176,7 @@ public:
 				}
 				break;
 			case down:
-				switch (prevDirection) {
+				switch (controller_ptr->getPrevDirection()) {
 				case right:
 					++tailPos.y;
 					tailPos.y = boundsCheck(tailPos.y);
@@ -187,7 +192,7 @@ public:
 				}
 				break;
 			case right:
-				switch (prevDirection) {
+				switch (controller_ptr->getPrevDirection()) {
 				case up:
 					--tailPos.x;
 					tailPos.x = boundsCheck(tailPos.x);
@@ -203,7 +208,7 @@ public:
 				}
 				break;
 			case left:
-				switch (prevDirection) {
+				switch (controller_ptr->getPrevDirection()) {
 				case up:
 					--tailPos.x;
 					tailPos.x = boundsCheck(tailPos.x);
@@ -220,18 +225,6 @@ public:
 				break;
 			}
 		}
-	}
-	void addCache() {
-		while (cache.size() < snakeLength) {
-			cache.push_back(getTailPosition());
-		}
-	}
-	void updateCache() {
-		trail = cache.back();
-		for (int i = cache.size() - 1; i > 0; --i) {
-			cache[i] = cache[i - 1];
-		}
-		cache[0] = tailPos;
 	}
 };
 
@@ -314,7 +307,6 @@ public:
 		}
 		return false;
 	}
-
 };
 
 class Gamestate {
@@ -322,10 +314,12 @@ private:
 	bool gameover{ false };
 	const Snake* const snake_ptr;
 	const CollisionManager* const collision_ptr;
+	const Controller* const controller_ptr;
 public:
-	Gamestate(const Snake& snake, const CollisionManager& manager) : 
+	Gamestate(const Snake& snake, const CollisionManager& manager, const Controller& controller) : 
 		snake_ptr{ &snake }, 
-		collision_ptr{ &manager } 
+		collision_ptr{ &manager },
+		controller_ptr{ &controller }
 	{}
 	bool getGameState() { return gameover; }
 	void solveState() {
@@ -333,7 +327,7 @@ public:
 			gameover = true;
 			std::cout << "Game Over!" << '\n';
 		}
-		if (snake_ptr->getQuitState()) {
+		if (controller_ptr->getQuitState()) {
 			gameover = true;
 			std::cout << "Game Over!" << '\n';
 		}
