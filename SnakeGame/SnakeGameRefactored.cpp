@@ -1,21 +1,20 @@
 #include <iostream>
-#include <chrono>
-#include <thread>
 #include "Objects.h"
 
 int main()
 {
     Board board{};
-    Snake snake(1);
+    Controller controller;
+    Snake snake(1, controller);
     Food food{};
     CollisionManager collisionManager(snake, food);
-    Gamestate gamestate(snake, collisionManager);
+    Gamestate gamestate(snake, collisionManager, controller);
 
     foodSafeSpawn(food, collisionManager);
     while (!gamestate.getGameState()) {
         board.draw();
         board.resetCursor();
-        snake.input();
+        controller.input();
         snake.movement();
         snake.movementCorrector();
         snake.addCache();
@@ -26,7 +25,7 @@ int main()
             foodSafeSpawn(food, collisionManager);
         }
         gamestate.solveState();
-        std::this_thread::sleep_for(std::chrono::milliseconds(150));
+        sleep();
     }
 
     return 0;
