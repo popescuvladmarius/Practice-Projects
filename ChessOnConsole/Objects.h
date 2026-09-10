@@ -1,7 +1,9 @@
 #pragma once
 #include <array>
+#include <cmath>
+#include "FunctionDeclarations.h"
 
-class Pos {
+struct Pos {
 	int x{};
 	int y{};
 	bool operator==(const Pos&) const = default;
@@ -9,75 +11,303 @@ class Pos {
 
 class Board {
 private:
-	std::array<std::array<char, 9>, 9> board{};
+	std::array<std::array<char, 8>, 8> board{};
 public:
 	Board() {
-		board[0] = {' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
-		board[1][0] = '1';
-		board[2][0] = '2';
-		board[3][0] = '3';
-		board[4][0] = '4';
-		board[5][0] = '5';
-		board[6][0] = '6';
-		board[7][0] = '7';
-		board[8][0] = '8';
+		
 	}
+
+};
+
+class White {
+
+};
+
+class Black {
+
+};
+
+class Controller {
+private:
+	Pos inputPos{};
+public:
+	void selectPiece() {
+
+	}
+
+	void setInput(Pos input) {
+		inputPos = input;
+	}
+	Pos getInputPos() const { return inputPos; }
+};
+
+class RuleManager {
+
+};
+
+class CollisionManager {
 
 };
 
 class Pawn {
 private:
-	char pawn{ 'P' };
 	Pos pos{};
+	const Controller& controller_ref{};
 public:
 	Pos getPawnPos() { return pos; }
-
+	Pos forward() {
+		Pos temp{ pos };
+		++temp.x;
+		return temp;
+	}
+	Pos forwardDouble() {
+		Pos temp{ pos };
+		temp.x + 2;
+		return temp;
+	}
+	Pos captureRight() {
+		Pos temp{ pos };
+		++temp.x;
+		++temp.y;
+		return temp;
+	}
+	Pos captureLeft() {
+		Pos temp{ pos };
+		++temp.x;
+		--temp.y;
+		return temp;
+	}
+	Pos move() {
+		if (forward() == controller_ref.getInputPos()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+		if (forwardDouble() == controller_ref.getInputPos()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+		if (captureRight() == controller_ref.getInputPos()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+		if (captureLeft() == controller_ref.getInputPos()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+	}
 };
 
 class Knight {
 private:
-	char knight{ 'K' };
 	Pos pos{};
+	const Controller& controller_ref{};
 public:
 	Pos getKnightPos() { return pos; }
+	Pos getUpRightJump() {
+		Pos temp{ pos };
+		temp.x += 2;
+		temp.y += 1;
+		return temp;
+	}
+	Pos getUpLeftJump() {
+		Pos temp{ pos };
+		temp.x += 2;
+		temp.y -= 1;
+		return temp;
+	}
+	Pos getDownRightJump() {
+		Pos temp{ pos };
+		temp.x -= 2;
+		temp.y += 1;
+		return temp;
+	}
+	Pos getDownLeftJump() {
+		Pos temp{ pos };
+		temp.x -= 2;
+		temp.y -= 1;
+		return temp;
+	}
+	Pos getRightUpJump() {
+		Pos temp{ pos };
+		temp.x += 1;
+		temp.y += 2;
+		return temp;
+	}
+	Pos getRightDownJump() {
+		Pos temp{ pos };
+		temp.x -= 1;
+		temp.y += 2;
+		return temp;
+	}
+	Pos getLeftUpJump() {
+		Pos temp{ pos };
+		temp.x += 1;
+		temp.y -= 2;
+		return temp;
+	}
+	Pos getLeftDownJump() {
+		Pos temp{ pos };
+		temp.x -= 1;
+		temp.y -= 2;
+		return temp;
+	}
+	Pos move() {
+		if (controller_ref.getInputPos() == getUpRightJump()) {
+			pos = controller_ref.getInputPos();
+		}
+		if (controller_ref.getInputPos() == getUpLeftJump()) {
+			pos = controller_ref.getInputPos();
+		}
+		if (controller_ref.getInputPos() == getDownRightJump()) {
+			pos = controller_ref.getInputPos();
+		}
+		if (controller_ref.getInputPos() == getDownLeftJump()) {
+			pos = controller_ref.getInputPos();
+		}
+		if (controller_ref.getInputPos() == getRightUpJump()) {
+			pos = controller_ref.getInputPos();
+		}
+		if (controller_ref.getInputPos() == getRightDownJump()) {
+			pos = controller_ref.getInputPos();
+		}
+		if (controller_ref.getInputPos() == getLeftUpJump()) {
+			pos = controller_ref.getInputPos();
+		}
+		if (controller_ref.getInputPos() == getLeftDownJump()) {
+			pos = controller_ref.getInputPos();
+		}
+	}
 };
 
 class Rook {
 private:
-	char rook{ 'R' };
 	Pos pos{};
+	const Controller& controller_ref{};
 public:
 	Pos getRookPos() { return pos; }
+	Pos move() {
+		if (isOnRow(pos, controller_ref.getInputPos()) || isOnCol(pos, controller_ref.getInputPos())) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+	}
 };
 
 class Bishop {
 private:
-	char bishop{ 'B' };
 	Pos pos{};
+	const Controller& controller_ref{};
 public:
 	Pos getBishopPos() { return pos; }
+	Pos move() {
+		if (isOnRightDiagonale(pos, controller_ref.getInputPos()) || isOnLeftDiagonale(pos, controller_ref.getInputPos())) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+	}
 };
 
 class King {
 private:
-	char king{ 'K' };
 	Pos pos{};
+	const Controller& controller_ref{};
 public:
 	Pos getKingPos() { return pos; }
+	Pos forward() {
+		Pos temp{ pos };
+		++temp.x;
+		return temp;
+	}
+	Pos backwards() {
+		Pos temp{ pos };
+		--temp.x;
+		return temp;
+	}
+	Pos right() {
+		Pos temp{ pos };
+		++temp.y;
+		return temp;
+	}
+	Pos left() {
+		Pos temp{ pos };
+		--temp.y;
+		return temp;
+	}
+	Pos up_right() {
+		Pos temp{ pos };
+		++temp.x;
+		++temp.y;
+		return temp;
+	}
+	Pos up_left() {
+		Pos temp{ pos };
+		++temp.x;
+		--temp.y;
+		return temp;
+	}
+	Pos down_right() {
+		Pos temp{ pos };
+		--temp.x;
+		++temp.y;
+		return temp;
+	}
+	Pos down_left() {
+		Pos temp{ pos };
+		--temp.x;
+		--temp.y;
+		return temp;
+	}
+	Pos move(){
+		if (controller_ref.getInputPos() == forward()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+		if (controller_ref.getInputPos() == backwards()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+		if (controller_ref.getInputPos() == right()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+		if (controller_ref.getInputPos() == left()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+		if (controller_ref.getInputPos() == up_right()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+		if (controller_ref.getInputPos() == up_left()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+		if (controller_ref.getInputPos() == down_right()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+		if (controller_ref.getInputPos() == down_left()) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+	}
 };
 
 class Queen {
 private:
-	char queen{ 'Q' };
 	Pos pos{};
+	const Controller& controller_ref{};
 public:
 	Pos getQueenPos() { return pos; }
+	Pos move() {
+		if (isOnRow(pos, controller_ref.getInputPos()) || isOnCol(pos, controller_ref.getInputPos()) || isOnRightDiagonale(pos, controller_ref.getInputPos()) || isOnLeftDiagonale(pos, controller_ref.getInputPos())) {
+			pos = controller_ref.getInputPos();
+			return pos;
+		}
+	}
 };
 
-class Controller {
-public:
-	void input() {
+class Gamestate {
 
-	}
 };
 
