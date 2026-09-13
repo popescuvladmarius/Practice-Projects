@@ -8,7 +8,7 @@ bool isOnLeftDiagonale(Pos pos, Pos inputPos) {
 		return false;
 	}
 }
-bool isOnRightDiagonale(Pos pos ,Pos inputPos) {
+bool isOnRightDiagonale(Pos pos, Pos inputPos) {
 	if ((std::abs(pos.y - pos.x) - std::abs(inputPos.y - inputPos.x)) % 2 == 0) {
 		return true;
 	}
