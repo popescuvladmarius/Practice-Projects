@@ -39,6 +39,7 @@ private:
 	char graphics{ 'p' };
 	const Controller& controller_ref{};
 public:
+	Pawn(const Controller& ref) : controller_ref{ref} {}
 	Pos getPawnPos() { return pos; }
 	char getGraphics() const { return graphics; }
 	void setPawnPos(int x, int y) { pos.x = x; pos.y = y; }
@@ -90,6 +91,7 @@ private:
 	char graphics{ 'k'};
 	const Controller& controller_ref{};
 public:
+	Knight(const Controller& ref) : controller_ref{ref} {}
 	Pos getKnightPos() { return pos; }
 	char getGraphics() const { return graphics; }
 	void setKnightPos(int x, int y) { pos.x = x; pos.y = y; }
@@ -183,6 +185,7 @@ private:
 	char graphics{ 'R' };
 	const Controller& controller_ref{};
 public:
+	Rook(const Controller& ref) : controller_ref{ ref } {}
 	Pos getRookPos() { return pos; }
 	char getGraphics() const { return graphics; }
 	void setRookPos(int x, int y) { pos.x = x; pos.y = y; }
@@ -200,6 +203,7 @@ private:
 	char graphics{ 'B' };
 	const Controller& controller_ref{};
 public:
+	Bishop(const Controller& ref) : controller_ref{ref} {}
 	Pos getBishopPos() { return pos; }
 	char getGraphics() const { return graphics; }
 	void setBishopPos(int x, int y) { pos.x = x; pos.y = y; }
@@ -217,6 +221,7 @@ private:
 	char graphics{ 'K' };
 	const Controller& controller_ref{};
 public:
+	King(const Controller& ref) : controller_ref{ref} {}
 	Pos getKingPos() { return pos; }
 	char getGraphics() const { return graphics; }
 	void setKingPos(int x, int y) { pos.x = x; pos.y = y; }
@@ -306,6 +311,7 @@ private:
 	char graphics{ 'Q' };
 	const Controller& controller_ref{};
 public:
+	Queen(const Controller& ref) : controller_ref{ref} {}
 	Pos getQueenPos() { return pos; }
 	char getGraphics() const { return graphics; }
 	void setQueenPos(int x, int y) { pos.x = x; pos.y = y; }
@@ -319,19 +325,45 @@ public:
 
 class Team {
 private:
-	King king{};
-	Queen queen{};
-	std::array<Rook, 2> rooks{};
-	std::array<Bishop, 2> bishops{};
-	std::array<Knight, 2> knights{};
-	std::array<Pawn, 8> pawns{};
+	Controller controller;
+	King king;
+	Queen queen;
+	std::array<Rook, 2> rooks;
+	std::array<Bishop, 2> bishops;
+	std::array<Knight, 2> knights;
+	std::array<Pawn, 8> pawns;
 public:
-	King getKing() const { return king; }
-	Queen getQueen() const { return queen; }
-	Rook getRook(int i) const { return rooks[i]; }
-	Bishop getBishop(int i) const { return bishops[i]; }
-	Knight getKnight(int i) const { return knights[i]; }
-	Pawn getPawn(int i) const { return pawns[i]; }
+	Team() :
+		king(controller), queen(controller), 
+		rooks{
+		Rook(controller),
+		Rook(controller)
+	},
+		bishops{
+		Bishop(controller),
+		Bishop(controller)
+	},
+		knights{
+		Knight(controller),
+		Knight(controller)
+	},
+		pawns{
+		Pawn(controller),
+		Pawn(controller),
+		Pawn(controller),
+		Pawn(controller),
+		Pawn(controller),
+		Pawn(controller),
+		Pawn(controller),
+		Pawn(controller)
+    }   
+	{}
+	King& getKing() { return king; }
+	Queen& getQueen() { return queen; }
+	Rook& getRook(int i) { return rooks[i]; }
+	Bishop& getBishop(int i) { return bishops[i]; }
+	Knight& getKnight(int i) { return knights[i]; }
+	Pawn& getPawn(int i) { return pawns[i]; }
 };
 
 class PieceManager {
@@ -339,8 +371,8 @@ private:
 	int whiteCount{16};
 	int blackCount{16};
 	int totalCount{ whiteCount + blackCount };
-	Team whites{};
-	Team blacks{};
+	Team whites;
+	Team blacks;
 	void initializeWhites() {
 		whites.getKing().setKingPos(7, 4);
 		whites.getQueen().setQueenPos(7, 3);
@@ -372,38 +404,38 @@ public:
 		initializeWhites();
 		initializeBlacks();
 	}
-	Pos getWhiteKingPos() const { return whites.getKing().getKingPos(); }
-	char getWhiteKingGraphics() const { return 'K'; }
-	Pos getWhiteQueenPos() const { return whites.getQueen().getQueenPos(); }
-	char getWhiteQueenGraphics() const { return 'Q'; }
-	Pos getWhiteRookPos(int i) const { return whites.getRook(i).getRookPos(); }
-	char getWhiteRookGraphics() const { return 'R'; }
-	Pos getWhiteBishopPos(int i) const { return whites.getBishop(i).getBishopPos(); }
-	char getWhiteBishopGraphics() const { return 'B'; }
-	Pos getWhiteKnightPos(int i) const { return whites.getKnight(i).getKnightPos(); }
-	char getWhiteKnightGraphics() const { return 'C'; }
-	Pos getWhitePawnPos(int i) const { return whites.getPawn(i).getPawnPos(); }
-	char getWhitePawnGraphics() const { return 'P'; }
-	Pos getBlackKingPos() const { return blacks.getKing().getKingPos(); }
-	char getBlackKingGraphics() const { return 'k'; }
-	Pos getBlackQueenPos() const { return blacks.getQueen().getQueenPos(); }
-	char getBlackQueenGraphics() const { return 'q'; }
-	Pos getBlackRookPos(int i) const { return blacks.getRook(i).getRookPos(); }
-	char getBlackRookGraphics() const { return 'r'; }
-	Pos getBlackBishopPos(int i) const { return blacks.getBishop(i).getBishopPos(); }
-	char getBlackBishopGraphics() const { return 'b'; }
-	Pos getBlackKnightPos(int i) const { return blacks.getKnight(i).getKnightPos(); }
-	char getBlackKnightGraphics() const { return 'c'; }
-	Pos getBlackPawnPos(int i) const { return blacks.getPawn(i).getPawnPos(); }
-	char getBlackPawnGraphics() const { return 'p'; }
+	Pos getWhiteKingPos() { return whites.getKing().getKingPos(); }
+	char getWhiteKingGraphics() { return 'K'; }
+	Pos getWhiteQueenPos() { return whites.getQueen().getQueenPos(); }
+	char getWhiteQueenGraphics() { return 'Q'; }
+	Pos getWhiteRookPos(int i) { return whites.getRook(i).getRookPos(); }
+	char getWhiteRookGraphics() { return 'R'; }
+	Pos getWhiteBishopPos(int i) { return whites.getBishop(i).getBishopPos(); }
+	char getWhiteBishopGraphics() { return 'B'; }
+	Pos getWhiteKnightPos(int i) { return whites.getKnight(i).getKnightPos(); }
+	char getWhiteKnightGraphics() { return 'C'; }
+	Pos getWhitePawnPos(int i) { return whites.getPawn(i).getPawnPos(); }
+	char getWhitePawnGraphics() { return 'P'; }
+	Pos getBlackKingPos() { return blacks.getKing().getKingPos(); }
+	char getBlackKingGraphics() { return 'k'; }
+	Pos getBlackQueenPos() { return blacks.getQueen().getQueenPos(); }
+	char getBlackQueenGraphics() { return 'q'; }
+	Pos getBlackRookPos(int i) { return blacks.getRook(i).getRookPos(); }
+	char getBlackRookGraphics() { return 'r'; }
+	Pos getBlackBishopPos(int i) { return blacks.getBishop(i).getBishopPos(); }
+	char getBlackBishopGraphics() { return 'b'; }
+	Pos getBlackKnightPos(int i) { return blacks.getKnight(i).getKnightPos(); }
+	char getBlackKnightGraphics() { return 'c'; }
+	Pos getBlackPawnPos(int i) { return blacks.getPawn(i).getPawnPos(); }
+	char getBlackPawnGraphics() { return 'p'; }
 };
 
 class Board {
 private:
+ PieceManager& piece_ref;
 	std::array<std::array<char, 8>, 8> board{};
-	const PieceManager& piece_ref{};
 public:
-	Board(const PieceManager& ref) : piece_ref{ref} {
+	Board(PieceManager& ref) : piece_ref{ref} {
 		for (std::size_t i = 2; i <= 5; ++i) {
 			for (std::size_t j = 0; j < board.size(); ++j) {
 				board[i][j] = '*';
@@ -432,6 +464,7 @@ public:
 			board[piece_ref.getBlackPawnPos(i).x][piece_ref.getBlackPawnPos(i).y] = piece_ref.getBlackPawnGraphics();
 		}
 	}
+
 	void render() {
 		for (std::size_t i = 0; i < board.size(); ++i) {
 			std::cout << board.size() - i << "  ";
@@ -440,7 +473,7 @@ public:
 			}
 			std::cout << '\n';
 		}
-		std::cout << "   " << "a " << "b " << "c " << "d " << "e " << "f " << "g " << "h " << '\n';
+		std::cout << '\n' << "   " << "a " << "b " << "c " << "d " << "e " << "f " << "g " << "h " << '\n';
 	}
 
 	void writeBoard() {
