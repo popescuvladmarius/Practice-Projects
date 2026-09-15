@@ -14,26 +14,85 @@ struct Pos {
 class Controller {
 private:
 	Pos inputPos{};
+	Pos inputSelect{};
+	char inputFile;
+	int inputRank;
+	bool isValid{ true };
+	std::array<char, 8> files;
 public:
-	void selectPiece() {
-
+	Controller() {
+		files[0] = 'a';
+		files[1] = 'b';
+		files[2] = 'c';
+		files[3] = 'd';
+		files[4] = 'e';
+		files[5] = 'f';
+		files[6] = 'g';
+		files[7] = 'h';
 	}
-
-	void setInputPos(Pos input) {
-		inputPos = input;
+	void input() {
+		std::cin >> inputFile >> inputRank;
+	}
+	bool checkInput() {
+		if (inputRank <= 8 && inputRank >= 1) {
+			for (std::size_t i = 0; i < 8; ++i) {
+				if (inputFile == files[i]) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	void selectPiece() {
+		input();
+		if (checkInput()) {
+			isValid = true;
+			inputSelect = getInputNormalized();
+		}
+		else {
+			isValid = false;
+		}
+	}
+	void selectMove() {
+		input();
+		if (checkInput()) {
+			isValid = true;
+			inputPos = getInputNormalized();
+		}
+		else {
+			isValid = false;
+		}
+	}
+	Pos getInputNormalized() {
+		int row{};
+		int col{};
+		Pos temp{};
+		for (std::size_t i = 0; i < 8; ++i) {
+			if (inputFile == files[i]) {
+				col = i;
+				break;
+			}
+		}
+		row = 7 - (inputRank - 1);
+		temp.x = row;
+		temp.y = col;
+		return temp;
 	}
 	Pos getInputPos() const { return inputPos; }
-};
-
-class RuleManager {
-
+	Pos getInputSelect() const { return inputSelect; }
 };
 
 class CollisionManager {
 
 };
 
-class Pawn {
+class Piece {
+public:
+	virtual Pos move() = 0;
+	virtual ~Piece() = default;
+};
+
+class Pawn : public Piece{
 private:
 	Pos pos{};
 	char graphics{ 'p' };
@@ -65,7 +124,7 @@ public:
 		--temp.y;
 		return temp;
 	}
-	Pos move() {
+	Pos move() override {
 		if (forward() == controller_ref.getInputPos()) {
 			pos = controller_ref.getInputPos();
 			return pos;
@@ -85,7 +144,7 @@ public:
 	}
 };
 
-class Knight {
+class Knight : public Piece {
 private:
 	Pos pos{};
 	char graphics{ 'k'};
@@ -143,7 +202,7 @@ public:
 		temp.y -= 2;
 		return temp;
 	}
-	Pos move() {
+	Pos move() override {
 		if (controller_ref.getInputPos() == getUpRightJump()) {
 			pos = controller_ref.getInputPos();
 			return pos;
@@ -179,7 +238,7 @@ public:
 	}
 };
 
-class Rook {
+class Rook : public Piece{
 private:
 	Pos pos{};
 	char graphics{ 'R' };
@@ -189,7 +248,7 @@ public:
 	Pos getRookPos() { return pos; }
 	char getGraphics() const { return graphics; }
 	void setRookPos(int x, int y) { pos.x = x; pos.y = y; }
-	Pos move() {
+	Pos move() override {
 		if (isOnRow(pos, controller_ref.getInputPos()) || isOnCol(pos, controller_ref.getInputPos())) {
 			pos = controller_ref.getInputPos();
 			return pos;
@@ -197,7 +256,7 @@ public:
 	}
 };
 
-class Bishop {
+class Bishop : public Piece{
 private:
 	Pos pos{};
 	char graphics{ 'B' };
@@ -207,7 +266,7 @@ public:
 	Pos getBishopPos() { return pos; }
 	char getGraphics() const { return graphics; }
 	void setBishopPos(int x, int y) { pos.x = x; pos.y = y; }
-	Pos move() {
+	Pos move() override {
 		if (isOnRightDiagonale(pos, controller_ref.getInputPos()) || isOnLeftDiagonale(pos, controller_ref.getInputPos())) {
 			pos = controller_ref.getInputPos();
 			return pos;
@@ -215,7 +274,7 @@ public:
 	}
 };
 
-class King {
+class King : public Piece{
 private:
 	Pos pos{};
 	char graphics{ 'K' };
@@ -269,7 +328,7 @@ public:
 		--temp.y;
 		return temp;
 	}
-	Pos move(){
+	Pos move() override {
 		if (controller_ref.getInputPos() == forward()) {
 			pos = controller_ref.getInputPos();
 			return pos;
@@ -305,7 +364,7 @@ public:
 	}
 };
 
-class Queen {
+class Queen : public Piece {
 private:
 	Pos pos{};
 	char graphics{ 'Q' };
@@ -315,7 +374,7 @@ public:
 	Pos getQueenPos() { return pos; }
 	char getGraphics() const { return graphics; }
 	void setQueenPos(int x, int y) { pos.x = x; pos.y = y; }
-	Pos move() {
+	Pos move() override {
 		if (isOnRow(pos, controller_ref.getInputPos()) || isOnCol(pos, controller_ref.getInputPos()) || isOnRightDiagonale(pos, controller_ref.getInputPos()) || isOnLeftDiagonale(pos, controller_ref.getInputPos())) {
 			pos = controller_ref.getInputPos();
 			return pos;
@@ -364,6 +423,7 @@ public:
 	Bishop& getBishop(int i) { return bishops[i]; }
 	Knight& getKnight(int i) { return knights[i]; }
 	Pawn& getPawn(int i) { return pawns[i]; }
+	Controller& getController() { return controller; }
 };
 
 class PieceManager {
@@ -428,6 +488,8 @@ public:
 	char getBlackKnightGraphics() { return 'c'; }
 	Pos getBlackPawnPos(int i) { return blacks.getPawn(i).getPawnPos(); }
 	char getBlackPawnGraphics() { return 'p'; }
+	Controller& getWhiteController() { return whites.getController(); }
+	Controller& getBlackController() { return blacks.getController(); }
 };
 
 class Board {
@@ -481,7 +543,33 @@ public:
 	}
 };
 
+class UserInterface {
+private:
+
+public:
+	
+};
+
 class Gamestate {
+private:
+	bool isValid{ true };
+	enum Turn {
+		white,
+		black
+	};
+	Turn turn;
+public:
 
 };
 
+class GameManager {
+private:
+	PieceManager piecemanager;
+	Board board;
+	Gamestate gamestate;
+	Piece* selected_piece;
+public:
+	void validateSelection() {
+
+	}
+};

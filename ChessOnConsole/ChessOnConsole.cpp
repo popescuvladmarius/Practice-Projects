@@ -7,8 +7,10 @@ int main()
 {
 	PieceManager piecemanager;
 	Board board(piecemanager);
+	Gamestate gamestate;
 	
 	board.render();
+
 
 
 
