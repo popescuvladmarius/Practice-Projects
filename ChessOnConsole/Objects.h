@@ -19,10 +19,8 @@ enum Flag {
 class Controller {
 private:
 	Pos inputPos{};
-	Pos inputSelect{};
 	char inputFile;
 	int inputRank;
-	bool isValid{ true };
 	std::array<char, 8> files;
 public:
 	Controller() {
@@ -48,26 +46,6 @@ public:
 		}
 		return false;
 	}
-	void selectPiece() {
-		input();
-		if (checkInput()) {
-			isValid = true;
-			inputSelect = getInputNormalized();
-		}
-		else {
-			isValid = false;
-		}
-	}
-	void selectMove() {
-		input();
-		if (checkInput()) {
-			isValid = true;
-			inputPos = getInputNormalized();
-		}
-		else {
-			isValid = false;
-		}
-	}
 	Pos getInputNormalized() {
 		int row{};
 		int col{};
@@ -83,32 +61,36 @@ public:
 		temp.y = col;
 		return temp;
 	}
+	void select() {
+		input();
+		if (checkInput()) {
+			inputPos = getInputNormalized();
+		}
+	}
 	const Pos& getInputPos() const { return inputPos; }
-	const Pos& getInputSelect() const { return inputSelect; }
-};
-
-class CollisionManager {
-
 };
 
 class Piece {
+protected:
+	Pos pos{};
+	Pos endPos{};
+	Flag flag{};
+	const PieceManager& piece_ref;
 public:
-	Flag flag;
+    const Pos& getPos() { return pos; }
+	void setPos(int x, int y) { pos.x = x; pos.y = y; }
+	void setEndPos(Pos pos) { endPos = pos; }
+	void setFlag(Flag input) { flag = input; }
+	void 
 	virtual Pos move() = 0;
 	virtual ~Piece() = default;
 };
 
 class Pawn : public Piece{
 private:
-	Pos pos{};
-	Pos endPos{};
 	char graphics{ 'p' };
 public:
-	Pos getPawnPos() { return pos; }
 	char getGraphics() const { return graphics; }
-	void setPawnPos(int x, int y) { pos.x = x; pos.y = y; }
-	void setEndPos(Pos pos) { endPos = pos; }
-	void setFlag(Flag input) { flag = input; }
 	Pos forward() {
 		Pos temp{ pos };
 		++temp.x;
@@ -153,15 +135,9 @@ public:
 
 class Knight : public Piece {
 private:
-	Pos pos{};
-	Pos endPos{};
 	char graphics{ 'k'};
 public:
-	Pos getKnightPos() { return pos; }
 	char getGraphics() const { return graphics; }
-	void setKnightPos(int x, int y) { pos.x = x; pos.y = y; }
-	void setEndPos(Pos pos) { endPos = pos; }
-	void setFlag(Flag input) { flag = input; }
 	Pos getUpRightJump() {
 		Pos temp{ pos };
 		temp.x += 2;
@@ -248,34 +224,25 @@ public:
 
 class Rook : public Piece{
 private:
-	Pos pos{};
-	Pos endPos{};
 	char graphics{ 'R' };
 public:
-	Pos getRookPos() { return pos; }
 	char getGraphics() const { return graphics; }
-	void setRookPos(int x, int y) { pos.x = x; pos.y = y; }
-	void setEndPos(Pos pos) { endPos = pos; }
-	void setFlag(Flag input) { flag = input; }
 	Pos move() override {
 		if (isOnRow(pos, endPos) || isOnCol(pos, endPos)) {
 			pos = endPos;
 			return pos;
+		}
+		if (isOnRow(pos, endPos)) {
+			
 		}
 	}
 };
 
 class Bishop : public Piece{
 private:
-	Pos pos{};
-	Pos endPos{};
 	char graphics{ 'B' };
 public:
-	Pos getBishopPos() { return pos; }
 	char getGraphics() const { return graphics; }
-	void setBishopPos(int x, int y) { pos.x = x; pos.y = y; }
-	void setEndPos(Pos pos) { endPos = pos; }
-	void setFlag(Flag input) { flag = input; }
 	Pos move() override {
 		if (isOnRightDiagonale(pos, endPos) || isOnLeftDiagonale(pos, endPos)) {
 			pos = endPos;
@@ -286,15 +253,9 @@ public:
 
 class King : public Piece{
 private:
-	Pos pos{};
-	Pos endPos{};
 	char graphics{ 'K' };
 public:
-	Pos getKingPos() { return pos; }
 	char getGraphics() const { return graphics; }
-	void setKingPos(int x, int y) { pos.x = x; pos.y = y; }
-	void setEndPos(Pos pos) { endPos = pos; }
-	void setFlag(Flag input) { flag = input; }
 	Pos forward() {
 		Pos temp{ pos };
 		++temp.x;
@@ -377,15 +338,9 @@ public:
 
 class Queen : public Piece {
 private:
-	Pos pos{};
-	Pos endPos{};
 	char graphics{ 'Q' };
 public:
-	Pos getQueenPos() { return pos; }
 	char getGraphics() const { return graphics; }
-	void setQueenPos(int x, int y) { pos.x = x; pos.y = y; }
-	void setEndPos(Pos pos) { endPos = pos; }
-	void setFlag(Flag input) { flag = input; }
 	Pos move() override {
 		if (isOnRow(pos, endPos) || isOnCol(pos, endPos) || isOnRightDiagonale(pos, endPos) || isOnLeftDiagonale(pos, endPos)) {
 			pos = endPos;
@@ -425,63 +380,63 @@ private:
 		blackPieces.reserve(16);
 		}
 	void initializeWhites() {
-		whites.getKing().setKingPos(7, 4);
+		whites.getKing().setPos(7, 4);
 		whites.getKing().setFlag(white);
 		whitePieces.push_back(&(whites.getKing()));
-		whites.getQueen().setQueenPos(7, 3);
+		whites.getQueen().setPos(7, 3);
 		whites.getQueen().setFlag(white);
 		whitePieces.push_back(&(whites.getQueen()));
-		whites.getRook(0).setRookPos(7, 0);
+		whites.getRook(0).setPos(7, 0);
 		whites.getRook(0).setFlag(white);
 		whitePieces.push_back(&(whites.getRook(0)));
-		whites.getRook(1).setRookPos(7, 7);
+		whites.getRook(1).setPos(7, 7);
 		whites.getRook(1).setFlag(white);
 		whitePieces.push_back(&(whites.getRook(1)));
-		whites.getBishop(0).setBishopPos(7, 2);
+		whites.getBishop(0).setPos(7, 2);
 		whites.getBishop(0).setFlag(white);
 		whitePieces.push_back(&(whites.getBishop(0)));
-		whites.getBishop(1).setBishopPos(7, 5);
+		whites.getBishop(1).setPos(7, 5);
 		whites.getBishop(1).setFlag(white);
 		whitePieces.push_back(&(whites.getBishop(1)));
-		whites.getKnight(0).setKnightPos(7, 1);
+		whites.getKnight(0).setPos(7, 1);
 		whites.getKnight(0).setFlag(white);
 		whitePieces.push_back(&(whites.getKnight(0)));
-		whites.getKnight(1).setKnightPos(7, 6);
+		whites.getKnight(1).setPos(7, 6);
 		whites.getKnight(1).setFlag(white);
 		whitePieces.push_back(&(whites.getKnight(1)));
 		for (std::size_t i = 0; i < 8; ++i) {
-			whites.getPawn(i).setPawnPos(6, i);
+			whites.getPawn(i).setPos(6, i);
 			whites.getPawn(i).setFlag(white);
 			whitePieces.push_back(&(whites.getPawn(i)));
 		}
 	}
 	void initializeBlacks() {
-		blacks.getKing().setKingPos(0, 4);
+		blacks.getKing().setPos(0, 4);
 		blacks.getKing().setFlag(black);
 		blackPieces.push_back(&(blacks.getKing()));
-		blacks.getQueen().setQueenPos(0, 3);
+		blacks.getQueen().setPos(0, 3);
 		blacks.getQueen().setFlag(black);
 		blackPieces.push_back(&(blacks.getQueen()));
-		blacks.getRook(0).setRookPos(0, 0);
+		blacks.getRook(0).setPos(0, 0);
 		blacks.getRook(0).setFlag(black);
 		blackPieces.push_back(&(blacks.getRook(0)));
-		blacks.getRook(1).setRookPos(0, 7);
+		blacks.getRook(1).setPos(0, 7);
 		blacks.getRook(1).setFlag(black);
 		blackPieces.push_back(&(blacks.getRook(1)));
-		blacks.getBishop(0).setBishopPos(0, 2);
+		blacks.getBishop(0).setPos(0, 2);
 		blacks.getBishop(0).setFlag(black);
 		blackPieces.push_back(&(blacks.getBishop(0)));
-		blacks.getBishop(1).setBishopPos(0, 5);
+		blacks.getBishop(1).setPos(0, 5);
 		blacks.getBishop(1).setFlag(black);
 		blackPieces.push_back(&(blacks.getBishop(1)));
-		blacks.getKnight(0).setKnightPos(0, 1);
+		blacks.getKnight(0).setPos(0, 1);
 		blacks.getKnight(0).setFlag(black);
 		blackPieces.push_back(&(blacks.getKnight(0)));
-		blacks.getKnight(1).setKnightPos(0, 6);
+		blacks.getKnight(1).setPos(0, 6);
 		blacks.getKnight(1).setFlag(black);
 		blackPieces.push_back(&(blacks.getKnight(1)));
 		for (std::size_t i = 0; i < 8; ++i) {
-			blacks.getPawn(i).setPawnPos(1, i);
+			blacks.getPawn(i).setPos(1, i);
 			blacks.getPawn(i).setFlag(black);
 			blackPieces.push_back(&(blacks.getPawn(i)));
 		}
@@ -492,30 +447,32 @@ public:
 		initializeWhites();
 		initializeBlacks();
 	}
-	Pos getWhiteKingPos() { return whites.getKing().getKingPos(); }
+	Pos getWhiteKingPos() { return whites.getKing().getPos(); }
 	char getWhiteKingGraphics() { return 'K'; }
-	Pos getWhiteQueenPos() { return whites.getQueen().getQueenPos(); }
+	Pos getWhiteQueenPos() { return whites.getQueen().getPos(); }
 	char getWhiteQueenGraphics() { return 'Q'; }
-	Pos getWhiteRookPos(int i) { return whites.getRook(i).getRookPos(); }
+	Pos getWhiteRookPos(int i) { return whites.getRook(i).getPos(); }
 	char getWhiteRookGraphics() { return 'R'; }
-	Pos getWhiteBishopPos(int i) { return whites.getBishop(i).getBishopPos(); }
+	Pos getWhiteBishopPos(int i) { return whites.getBishop(i).getPos(); }
 	char getWhiteBishopGraphics() { return 'B'; }
-	Pos getWhiteKnightPos(int i) { return whites.getKnight(i).getKnightPos(); }
+	Pos getWhiteKnightPos(int i) { return whites.getKnight(i).getPos(); }
 	char getWhiteKnightGraphics() { return 'C'; }
-	Pos getWhitePawnPos(int i) { return whites.getPawn(i).getPawnPos(); }
+	Pos getWhitePawnPos(int i) { return whites.getPawn(i).getPos(); }
 	char getWhitePawnGraphics() { return 'P'; }
-	Pos getBlackKingPos() { return blacks.getKing().getKingPos(); }
+	Pos getBlackKingPos() { return blacks.getKing().getPos(); }
 	char getBlackKingGraphics() { return 'k'; }
-	Pos getBlackQueenPos() { return blacks.getQueen().getQueenPos(); }
+	Pos getBlackQueenPos() { return blacks.getQueen().getPos(); }
 	char getBlackQueenGraphics() { return 'q'; }
-	Pos getBlackRookPos(int i) { return blacks.getRook(i).getRookPos(); }
+	Pos getBlackRookPos(int i) { return blacks.getRook(i).getPos(); }
 	char getBlackRookGraphics() { return 'r'; }
-	Pos getBlackBishopPos(int i) { return blacks.getBishop(i).getBishopPos(); }
+	Pos getBlackBishopPos(int i) { return blacks.getBishop(i).getPos(); }
 	char getBlackBishopGraphics() { return 'b'; }
-	Pos getBlackKnightPos(int i) { return blacks.getKnight(i).getKnightPos(); }
+	Pos getBlackKnightPos(int i) { return blacks.getKnight(i).getPos(); }
 	char getBlackKnightGraphics() { return 'c'; }
-	Pos getBlackPawnPos(int i) { return blacks.getPawn(i).getPawnPos(); }
+	Pos getBlackPawnPos(int i) { return blacks.getPawn(i).getPos(); }
 	char getBlackPawnGraphics() { return 'p'; }
+	std::vector<Piece*>& getWhiteVector() { return whitePieces; }
+	std::vector<Piece*>& getBlackVector() { return blackPieces; }
 };
 
 class Board {
@@ -567,23 +524,22 @@ public:
 	}
 };
 
-class UserInterface {
-private:
-
-public:
-	
-};
-
 class Gamestate {
 private:
-	bool isValid{ true };
+	bool state{ true };
 	enum Turn {
 		white,
 		black
 	};
 	Turn turn;
+	Piece* selected_piece{ nullptr };
+	Pos selected_move{};
 public:
 	Turn& getTurn() { return turn; }
+	void setSelectedPiece(Piece* piece) { selected_piece = piece; }
+	Piece* getSelectedPiece() { return selected_piece; }
+	void setState(bool input) { state = input; }
+	bool getState() { return state; }
 };
 
 class GameManager {
@@ -592,16 +548,51 @@ private:
 	Controller controller;
 	Board board;
 	Gamestate gamestate;
-	Piece* selected_piece;
 public:
-	void validatePieceSelection() {
+	bool checkState() {
+		if (gamestate.getState()) {
+			return true;
+		}
+		return false;
+	}
+	void selectPiece() {
+		controller.select();
 		switch (gamestate.getTurn()) {
 		case white:
-			
-
+			for (const auto& a : piecemanager.getWhiteVector()) {
+				if (controller.getInputPos() == a->getPos()) {
+					gamestate.setSelectedPiece(a);
+					break;
+				}
+				else {
+					gamestate.setSelectedPiece(nullptr);
+					gamestate.setState(false);
+				}
+			}
+			break;
+		case black:
+			for (const auto& a : piecemanager.getBlackVector()) {
+				if (controller.getInputPos() == a->getPos()) {
+					gamestate.setSelectedPiece(a);
+					break;
+				}
+				else {
+					gamestate.setSelectedPiece(nullptr);
+					gamestate.setState(false);
+				}
+			}
+			break;
 		}
 	}
-	void validateMoveSelection() {
+	void selectMove() {
+		if (gamestate.getSelectedPiece()) {
+			controller.select();
+			gamestate.getSelectedPiece()->setEndPos(controller.getInputPos());
+		}
+
+	}
+	void run() {
 
 	}
 };
+
