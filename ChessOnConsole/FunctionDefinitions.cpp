@@ -32,3 +32,10 @@ bool isOnCol(Pos pos, Pos inputPos) {
 		return false;
 	}
 }
+bool collisionCheckOnRow(Pos pos, Pos endPos) {
+	if (endPos.y > pos.y) {
+		for (pos.y; pos.y <= endPos.y; ++pos.y) {
+			if ()
+		}
+	}
+}

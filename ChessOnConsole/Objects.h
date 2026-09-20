@@ -70,6 +70,9 @@ public:
 	const Pos& getInputPos() const { return inputPos; }
 };
 
+class Team;
+class PieceManager;
+
 class Piece {
 protected:
 	Pos pos{};
@@ -77,11 +80,11 @@ protected:
 	Flag flag{};
 	const PieceManager& piece_ref;
 public:
+	Piece(const PieceManager& ref) : piece_ref{ ref } {}
     const Pos& getPos() { return pos; }
 	void setPos(int x, int y) { pos.x = x; pos.y = y; }
 	void setEndPos(Pos pos) { endPos = pos; }
 	void setFlag(Flag input) { flag = input; }
-	void 
 	virtual Pos move() = 0;
 	virtual ~Piece() = default;
 };
@@ -90,6 +93,7 @@ class Pawn : public Piece{
 private:
 	char graphics{ 'p' };
 public:
+	Pawn(const PieceManager& ref) : Piece{ ref } {}
 	char getGraphics() const { return graphics; }
 	Pos forward() {
 		Pos temp{ pos };
@@ -137,6 +141,7 @@ class Knight : public Piece {
 private:
 	char graphics{ 'k'};
 public:
+	Knight(const PieceManager& ref) : Piece{ ref } {}
 	char getGraphics() const { return graphics; }
 	Pos getUpRightJump() {
 		Pos temp{ pos };
@@ -226,6 +231,7 @@ class Rook : public Piece{
 private:
 	char graphics{ 'R' };
 public:
+	Rook(const PieceManager& ref) : Piece{ ref } {}
 	char getGraphics() const { return graphics; }
 	Pos move() override {
 		if (isOnRow(pos, endPos) || isOnCol(pos, endPos)) {
@@ -233,7 +239,12 @@ public:
 			return pos;
 		}
 		if (isOnRow(pos, endPos)) {
-			
+			if (endPos.y > pos.y){
+
+			}
+		}
+		if (isOnCol(pos, endPos)) {
+
 		}
 	}
 };
@@ -242,6 +253,7 @@ class Bishop : public Piece{
 private:
 	char graphics{ 'B' };
 public:
+	Bishop(const PieceManager& ref) : Piece{ ref } {}
 	char getGraphics() const { return graphics; }
 	Pos move() override {
 		if (isOnRightDiagonale(pos, endPos) || isOnLeftDiagonale(pos, endPos)) {
@@ -255,6 +267,7 @@ class King : public Piece{
 private:
 	char graphics{ 'K' };
 public:
+	King(const PieceManager& ref) : Piece{ref} {}
 	char getGraphics() const { return graphics; }
 	Pos forward() {
 		Pos temp{ pos };
@@ -340,6 +353,7 @@ class Queen : public Piece {
 private:
 	char graphics{ 'Q' };
 public:
+	Queen(const PieceManager& ref) : Piece{ ref } {}
 	char getGraphics() const { return graphics; }
 	Pos move() override {
 		if (isOnRow(pos, endPos) || isOnCol(pos, endPos) || isOnRightDiagonale(pos, endPos) || isOnLeftDiagonale(pos, endPos)) {
@@ -358,6 +372,32 @@ private:
 	std::array<Knight, 2> knights;
 	std::array<Pawn, 8> pawns;
 public:
+	Team(const PieceManager& ref) : 
+	king(ref),
+	queen(ref),
+	rooks {
+		Rook(ref),
+		Rook(ref)
+	},
+	bishops {
+		Bishop(ref),
+		Bishop(ref)
+	},
+	knights {
+		Knight(ref),
+		Knight(ref)
+	},
+	pawns {
+		Pawn(ref),
+		Pawn(ref),
+		Pawn(ref),
+		Pawn(ref),
+		Pawn(ref),
+		Pawn(ref),
+		Pawn(ref),
+		Pawn(ref)
+	}
+	{}
 	King& getKing() { return king; }
 	Queen& getQueen() { return queen; }
 	Rook& getRook(int i) { return rooks[i]; }
@@ -442,7 +482,10 @@ private:
 		}
 	}
 public:
-	PieceManager() {
+	PieceManager() :
+		whites(*this),
+		blacks(*this)
+	{
 		reserve();
 		initializeWhites();
 		initializeBlacks();
@@ -588,6 +631,9 @@ public:
 		if (gamestate.getSelectedPiece()) {
 			controller.select();
 			gamestate.getSelectedPiece()->setEndPos(controller.getInputPos());
+		}
+		else {
+			gamestate.setState(false);
 		}
 
 	}
