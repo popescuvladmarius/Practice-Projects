@@ -139,12 +139,26 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ChessOnConsole.cpp" />
+    <ClCompile Include="Board.cpp" />
+    <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="Gamestate.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="FunctionDefinitions.cpp" />
+    <ClCompile Include="Pieces.cpp" />
+    <ClCompile Include="PieceManager.cpp" />
+    <ClCompile Include="Team.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Board.h" />
+    <ClInclude Include="Controller.h" />
     <ClInclude Include="FunctionDeclarations.h" />
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="Gamestate.h" />
     <ClInclude Include="Objects.h" />
+    <ClInclude Include="Pieces.h" />
+    <ClInclude Include="PieceManager.h" />
+    <ClInclude Include="Team.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
