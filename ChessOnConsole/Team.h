@@ -1,15 +1,6 @@
 #pragma once
-#include <array>
-#include "King.h"
+#include "Pieces.h"
 
-
-class King;
-class Queen;
-class Rook;
-class Bishop;
-class Knight;
-class Pawn;
-class PieceManager;
 class Team{
 private:
 	King king;
@@ -19,37 +10,11 @@ private:
 	std::array<Knight, 2> knights;
 	std::array<Pawn, 8> pawns;
 public:
-	Team(const PieceManager& ref) :
-		king(ref),
-		queen(ref),
-		rooks{
-			Rook(ref),
-			Rook(ref)
-		},
-		bishops{
-			Bishop(ref),
-			Bishop(ref)
-		},
-		knights{
-			Knight(ref),
-			Knight(ref)
-		},
-		pawns{
-			Pawn(ref),
-			Pawn(ref),
-			Pawn(ref),
-			Pawn(ref),
-			Pawn(ref),
-			Pawn(ref),
-			Pawn(ref),
-			Pawn(ref)
-		}
-	{
-	}
-	King& getKing() { return king; }
-	Queen& getQueen() { return queen; }
-	Rook& getRook(int i) { return rooks[i]; }
-	Bishop& getBishop(int i) { return bishops[i]; }
-	Knight& getKnight(int i) { return knights[i]; }
-	Pawn& getPawn(int i) { return pawns[i]; }
+	Team(const PieceManager& ref);
+	King& getKing();
+	Queen& getQueen();
+	Rook& getRook(int i);
+	Bishop& getBishop(int i);
+	Knight& getKnight(int i);
+	Pawn& getPawn(int i);
 };

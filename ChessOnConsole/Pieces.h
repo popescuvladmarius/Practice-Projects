@@ -1,6 +1,8 @@
 #pragma once
 #include "Objects.h"
 
+class PieceManager;
+
 class Piece {
 protected:
 	Pos pos{};
@@ -90,41 +92,7 @@ class Queen : public Piece {
 private:
 	char graphics{ 'Q' };
 public:
-	Queen(const PieceManager& ref) : Piece{ ref } {}
-	char getGraphics() const { return graphics; }
-	bool isValid() override {
-		if (isOnRow(pos, endPos)) {
-			if (isMoveValidOnRow(pos, endPos, piece_ref.getMasterArray(), this)) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		if (isOnCol(pos, endPos)) {
-			if (isMoveValidOnCol(pos, endPos, piece_ref.getMasterArray(), this)) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		if (isOnRightDiag(pos, endPos)) {
-			if (isMoveValidOnRightDiag(pos, endPos, piece_ref.getMasterArray(), this)) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		if (isOnLeftDiag(pos, endPos)) {
-			if (isMoveValidOnLeftDiag(pos, endPos, piece_ref.getMasterArray(), this)) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		return false;
-	}
+	Queen(const PieceManager& ref);
+	char getGraphics() const;
+	bool isValid() override;
 };

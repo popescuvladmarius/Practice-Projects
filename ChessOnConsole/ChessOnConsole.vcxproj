@@ -144,7 +144,7 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Gamestate.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="FunctionDefinitions.cpp" />
+    <ClCompile Include="GeneralFunctions.cpp" />
     <ClCompile Include="Pieces.cpp" />
     <ClCompile Include="PieceManager.cpp" />
     <ClCompile Include="Team.cpp" />
@@ -152,7 +152,7 @@
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="Controller.h" />
-    <ClInclude Include="FunctionDeclarations.h" />
+    <ClInclude Include="GeneralFunctions.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Gamestate.h" />
     <ClInclude Include="Objects.h" />

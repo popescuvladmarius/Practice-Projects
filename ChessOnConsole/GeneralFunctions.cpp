@@ -1,5 +1,5 @@
-#include "Objects.h"
-#include "FunctionDeclarations.h"
+#include "GeneralFunctions.h"
+#include "Pieces.h"
 
 bool isOnLeftDiag(Pos pos, Pos inputPos) {
 	if ((pos.y - pos.x) == (inputPos.y - inputPos.x)) {

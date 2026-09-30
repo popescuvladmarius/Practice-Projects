@@ -1,4 +1,5 @@
 #include "Pieces.h"
+#include "PieceManager.h"
 
 Piece::Piece(const PieceManager& ref) : piece_ref{ ref } {}
 Pos Piece::getPos() { return pos; }
@@ -11,7 +12,7 @@ Pos Piece::move() {
 	return pos;
 }
 int Piece::dir() {
-	if (this->getFlag() == white) {
+	if (this->getFlag() == Flag::white) {
 		return -i;
 	}
 	else {
@@ -53,7 +54,7 @@ bool Pawn::isValid() {
 		}
 	}
 	if (forwardDouble() == endPos) {
-		if (this->getFlag() == white && this->getPos().x == 6) {
+		if (this->getFlag() == Flag::white && this->getPos().x == 6) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x + 1][endPos.y]) {
 				return false;
 			}
@@ -61,7 +62,7 @@ bool Pawn::isValid() {
 				return true;
 			}
 		}
-		if (this->getFlag() == black && this->getPos().x == 1) {
+		if (this->getFlag() == Flag::black && this->getPos().x == 1) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x - 1][endPos.y]) {
 				return false;
 			}
@@ -456,9 +457,9 @@ bool King::isValid() {
 	return false;
 }
 
-Queen(const PieceManager& ref) : Piece{ ref } {}
-char getGraphics() const { return graphics; }
-bool isValid() override {
+Queen::Queen(const PieceManager& ref) : Piece{ ref } {}
+char Queen::getGraphics() const { return graphics; }
+bool Queen::isValid() {
 	if (isOnRow(pos, endPos)) {
 		if (isMoveValidOnRow(pos, endPos, piece_ref.getMasterArray(), this)) {
 			return true;
