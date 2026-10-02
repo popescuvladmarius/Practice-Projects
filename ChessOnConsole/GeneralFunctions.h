@@ -11,3 +11,5 @@ bool isMoveValidOnRow(Pos pos, Pos endPos, const std::array<std::array<Piece*, 8
 bool isMoveValidOnCol(Pos pos, Pos endPos, const std::array<std::array<Piece*, 8>, 8>& array, const Piece* piece);
 bool isMoveValidOnRightDiag(Pos pos, Pos endPos, const std::array<std::array<Piece*, 8>, 8>& array, const Piece* piece);
 bool isMoveValidOnLeftDiag(Pos pos, Pos endPos, const std::array<std::array<Piece*, 8>, 8>& array, const Piece* piece);
+void invalidPieceMessage();
+void invalidMoveMessage();

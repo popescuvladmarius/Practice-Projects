@@ -149,3 +149,9 @@ bool isMoveValidOnRightDiag(Pos pos, Pos endPos, const std::array<std::array<Pie
 		return true;
 	}
 }
+void invalidPieceMessage() {
+	std::cout << "Invalid Piece" << '\n' << "Select again" << '\n';
+}
+void invalidMoveMessage() {
+	std::cout << "Invalid Move" << '\n' << "Select again" << '\n';
+}

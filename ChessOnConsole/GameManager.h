@@ -1,15 +1,16 @@
 #pragma once
 #include "Pieces.h"
+#include "PieceManager.h"
 #include "Controller.h"
-#include "Board.h"
 #include "Gamestate.h"
+#include "Board.h"
 
 class GameManager {
 private:
 	PieceManager piecemanager;
 	Controller controller;
-	Board board;
 	Gamestate gamestate;
+	Board board;
 public:
 	bool checkState();
 	void selectPiece();

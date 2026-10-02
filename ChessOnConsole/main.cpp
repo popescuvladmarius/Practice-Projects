@@ -1,6 +1,7 @@
 #include <iostream>
 #include <windows.h>
 #include "Objects.h"
+#include "PieceManager.h"
 #include "Pieces.h"
 #include "Gamestate.h"
 #include "Board.h"
@@ -9,10 +10,10 @@ int main()
 {
 	PieceManager piecemanager;
 	Gamestate gamestate;
-	Board board(piecemanager);
-	
+	Board board(piecemanager, gamestate);
 	
 	board.render();
+	
 
 
 

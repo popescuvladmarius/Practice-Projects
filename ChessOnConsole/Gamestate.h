@@ -1,9 +1,11 @@
 #pragma once
 #include "Objects.h"
 
+class Piece;
 class Gamestate {
 private:
 	bool state{ true };
+	Status status{ Status::init };
 	Turn turn{ Turn::white };
 	Piece* selected_piece{ nullptr };
 	Pos selected_move{};
@@ -16,4 +18,6 @@ public:
 	Pos getSelectedMove();
 	void setState(bool input);
 	bool getState();
+	void setStatus(Status input);
+	Status getStatus();
 };

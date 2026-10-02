@@ -7,44 +7,53 @@ bool GameManager::checkState() {
 	return false;
 }
 void GameManager::selectPiece() {
-	controller.select();
-	switch (gamestate.getTurn()) {
-	case Turn::white:
-		if (piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y] && piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]->getFlag() == Flag::white) {
-			gamestate.setSelectedPiece(piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]);
+	while (gamestate.getStatus() != Status::validPiece) {
+		if (gamestate.getStatus() == Status::invalidPiece) {
+			invalidPieceMessage();
 		}
-		else {
-			gamestate.setSelectedPiece(nullptr);
-			gamestate.setState(false);
+		controller.select();
+		switch (gamestate.getTurn()) {
+		case Turn::white:
+			if (piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y] && piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]->getFlag() == Flag::white) {
+				gamestate.setSelectedPiece(piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]);
+				gamestate.setStatus(Status::validPiece);
+			}
+			else {
+				gamestate.setSelectedPiece(nullptr);
+				gamestate.setStatus(Status::invalidPiece);
+			}
+			break;
+		case Turn::black:
+			if (piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y] && piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]->getFlag() == Flag::black) {
+				gamestate.setSelectedPiece(piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]);
+				gamestate.setStatus(Status::validPiece);
+			}
+			else {
+				gamestate.setSelectedPiece(nullptr);
+				gamestate.setStatus(Status::invalidPiece);
+			}
+			break;
 		}
-		break;
-	case Turn::black:
-		if (piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y] && piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]->getFlag() == Flag::black) {
-			gamestate.setSelectedPiece(piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]);
-		}
-		else {
-			gamestate.setSelectedPiece(nullptr);
-			gamestate.setState(false);
-		}
-		break;
+
 	}
 }
 void GameManager::selectMove() {
-	if (gamestate.getSelectedPiece()) {
-		controller.select();
-		gamestate.getSelectedPiece()->setEndPos(controller.getInputPos());
-		if (gamestate.getSelectedPiece()->isValid()) {
-			gamestate.getSelectedPiece()->move();
-			gamestate.setSelectedMove(gamestate.getSelectedPiece()->getPos());
+	while (gamestate.getStatus() != Status::validMove) {
+		if (gamestate.getStatus() == Status::invalidMove) {
+			invalidMoveMessage();
 		}
-		else {
-			gamestate.setState(false);
-		}
-	}
-	else {
-		gamestate.setState(false);
-	}
+			controller.select();
+			gamestate.getSelectedPiece()->setEndPos(controller.getInputPos());
+			if (gamestate.getSelectedPiece()->isValid()) {
+				gamestate.getSelectedPiece()->move();
+				gamestate.setSelectedMove(gamestate.getSelectedPiece()->getPos());
+				gamestate.setStatus(Status::validMove);
 
+			}
+			else {
+				gamestate.setStatus(Status::invalidMove);
+			}
+		}
 }
 void GameManager::nextTurn() {
 	if (gamestate.getTurn() == Turn::white) {
@@ -55,7 +64,11 @@ void GameManager::nextTurn() {
 	}
 }
 void GameManager::run() {
-	while (gamestate.getState()) {
-
+	while (checkState()) {
+			board.render();
+			selectPiece();
+			selectMove();
+			board.writeBoard();
+			nextTurn();
 	}
 }

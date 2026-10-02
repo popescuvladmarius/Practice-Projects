@@ -8,3 +8,5 @@ void Gamestate::setSelectedMove(Pos pos) { selected_move = pos; }
 Pos Gamestate::getSelectedMove() { return selected_move; }
 void Gamestate::setState(bool input) { state = input; }
 bool Gamestate::getState() { return state; }
+void Gamestate::setStatus(Status input) { status = input; }
+Status Gamestate::getStatus() { return status; }

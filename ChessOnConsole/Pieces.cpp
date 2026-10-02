@@ -19,9 +19,10 @@ int Piece::dir() {
 		return i;
 	}
 }
+void Piece::setGraphics(char value) { graphics = value; }
+char Piece::getGraphics() { return graphics; }
 
 Pawn::Pawn(const PieceManager& ref) : Piece{ ref } {}
-char Pawn::getGraphics() const { return graphics; }
 Pos Pawn::forward() {
 	Pos temp{ pos };
 	temp.x += dir();
@@ -102,7 +103,6 @@ bool Pawn::isValid() {
 }
 
 Knight::Knight(const PieceManager& ref) : Piece{ ref } {}
-char Knight::getGraphics() const { return graphics; }
 Pos Knight::getUpRightJump() {
 	Pos temp{ pos };
 	temp.x += 2 * dir();
@@ -260,7 +260,6 @@ bool Knight::isValid() {
 }
 
 Rook::Rook(const PieceManager& ref) : Piece{ ref } {}
-char Rook::getGraphics() const { return graphics; }
 bool Rook::isValid() {
 	if (isOnRow(pos, endPos)) {
 		if (isMoveValidOnRow(pos, endPos, piece_ref.getMasterArray(), this)) {
@@ -282,7 +281,6 @@ bool Rook::isValid() {
 }
 
 Bishop::Bishop(const PieceManager& ref) : Piece{ ref } {}
-char Bishop::getGraphics() const { return graphics; }
 bool Bishop::isValid() {
 	if (isOnLeftDiag(pos, endPos)) {
 		if (isMoveValidOnLeftDiag(pos, endPos, piece_ref.getMasterArray(), this)) {
@@ -304,7 +302,6 @@ bool Bishop::isValid() {
 }
 
 King::King(const PieceManager& ref) : Piece{ ref } {}
-char King::getGraphics() const { return graphics; }
 Pos King::forward() {
 	Pos temp{ pos };
 	temp.x += dir();
@@ -458,7 +455,6 @@ bool King::isValid() {
 }
 
 Queen::Queen(const PieceManager& ref) : Piece{ ref } {}
-char Queen::getGraphics() const { return graphics; }
 bool Queen::isValid() {
 	if (isOnRow(pos, endPos)) {
 		if (isMoveValidOnRow(pos, endPos, piece_ref.getMasterArray(), this)) {

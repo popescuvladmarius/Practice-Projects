@@ -21,4 +21,17 @@ enum class Turn {
 	black
 };
 
+enum class Status {
+	init,
+	validPiece,
+	validMove,
+	invalidPiece,
+	invalidMove
+};
+
+struct Move {
+	Pos move;
+
+};
+
 

@@ -9,6 +9,7 @@ protected:
 	Pos endPos{};
 	Flag flag{};
 	int i{ 1 };
+	char graphics{};
 	const PieceManager& piece_ref;
 public:
 	Piece(const PieceManager& ref);
@@ -19,16 +20,15 @@ public:
 	Flag getFlag() const;
 	Pos move();
 	int dir();
+	void setGraphics(char value);
+	char getGraphics();
 	virtual bool isValid() = 0;
 	virtual ~Piece() = default;
 };
 
 class Pawn : public Piece {
-private:
-	char graphics{ 'p' };
 public:
 	Pawn(const PieceManager& ref);
-	char getGraphics() const;
 	Pos forward();
 	Pos forwardDouble();
 	Pos captureRight();
@@ -37,11 +37,8 @@ public:
 };
 
 class Knight : public Piece {
-private:
-	char graphics{ 'k' };
 public:
 	Knight(const PieceManager& ref);
-	char getGraphics() const;
 	Pos getUpRightJump();
 	Pos getUpLeftJump();
 	Pos getDownRightJump();
@@ -54,29 +51,20 @@ public:
 };
 
 class Rook : public Piece {
-private:
-	char graphics{ 'R' };
 public:
 	Rook(const PieceManager& ref);
-	char getGraphics() const;
 	bool isValid() override;
 };
 
 class Bishop : public Piece {
-private:
-	char graphics{ 'B' };
 public:
 	Bishop(const PieceManager& ref);
-	char getGraphics() const;
 	bool isValid() override;
 };
 
 class King : public Piece {
-private:
-	char graphics{ 'K' };
 public:
 	King(const PieceManager& ref);
-	char getGraphics() const;
 	Pos forward();
 	Pos backwards();
 	Pos right();
@@ -89,10 +77,7 @@ public:
 };
 
 class Queen : public Piece {
-private:
-	char graphics{ 'Q' };
 public:
 	Queen(const PieceManager& ref);
-	char getGraphics() const;
 	bool isValid() override;
 };

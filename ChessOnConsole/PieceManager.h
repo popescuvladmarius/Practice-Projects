@@ -4,7 +4,6 @@
 #include "Team.h"
 
 class Pos;
-class Team;
 class Piece;
 class PieceManager {
 private:
@@ -22,30 +21,6 @@ private:
 	void initializeArray();
 public:
 	PieceManager();
-	Pos getWhiteKingPos();
-	char getWhiteKingGraphics();
-	Pos getWhiteQueenPos();
-	char getWhiteQueenGraphics();
-	Pos getWhiteRookPos(int i);
-	char getWhiteRookGraphics();
-	Pos getWhiteBishopPos(int i);
-	char getWhiteBishopGraphics();
-	Pos getWhiteKnightPos(int i);
-	char getWhiteKnightGraphics();
-	Pos getWhitePawnPos(int i);
-	char getWhitePawnGraphics();
-	Pos getBlackKingPos();
-	char getBlackKingGraphics();
-	Pos getBlackQueenPos();
-	char getBlackQueenGraphics();
-	Pos getBlackRookPos(int i);
-	char getBlackRookGraphics();
-	Pos getBlackBishopPos(int i);
-	char getBlackBishopGraphics();
-	Pos getBlackKnightPos(int i);
-	char getBlackKnightGraphics();
-	Pos getBlackPawnPos(int i);
-	char getBlackPawnGraphics();
 	std::vector<Piece*> getWhiteVector();
 	std::vector<Piece*> getBlackVector();
 	const std::array<std::array<Piece*, 8>, 8> getMasterArray() const;
