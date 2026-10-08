@@ -46,9 +46,8 @@ void GameManager::selectMove() {
 			gamestate.getSelectedPiece()->setEndPos(controller.getInputPos());
 			if (gamestate.getSelectedPiece()->isValid()) {
 				gamestate.getSelectedPiece()->move();
-				gamestate.setSelectedMove(gamestate.getSelectedPiece()->getPos());
+				gamestate.addMove(gamestate.getSelectedPiece()->getPos(), gamestate.getSelectedPiece()->getGraphics());
 				gamestate.setStatus(Status::validMove);
-
 			}
 			else {
 				gamestate.setStatus(Status::invalidMove);

@@ -31,7 +31,7 @@ enum class Status {
 
 struct Move {
 	Pos move;
-
+	char graphics;
 };
 
 

@@ -7,9 +7,6 @@ class Pos;
 class Piece;
 class PieceManager {
 private:
-	int whiteCount{ 16 };
-	int blackCount{ 16 };
-	int totalCount{ whiteCount + blackCount };
 	Team whites;
 	Team blacks;
 	std::vector<Piece*> whitePieces;
