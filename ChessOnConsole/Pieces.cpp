@@ -21,25 +21,28 @@ int Piece::dir() {
 }
 void Piece::setGraphics(char value) { graphics = value; }
 char Piece::getGraphics() { return graphics; }
+void Piece::didCapture() { capture = true; }
+bool Piece::checkCapture() { return capture; }
+void Piece::resetCapture() { capture = false; }
 
 Pawn::Pawn(const PieceManager& ref) : Piece{ ref } {}
-Pos Pawn::forward() {
+inline Pos Pawn::forward() {
 	Pos temp{ pos };
 	temp.x += dir();
 	return temp;
 }
-Pos Pawn::forwardDouble() {
+inline Pos Pawn::forwardDouble() {
 	Pos temp{ pos };
 	temp.x += 2 * dir();
 	return temp;
 }
-Pos Pawn::captureRight() {
+inline Pos Pawn::captureRight() {
 	Pos temp{ pos };
 	temp.x += dir();
 	++temp.y;
 	return temp;
 }
-Pos Pawn::captureLeft() {
+inline Pos Pawn::captureLeft() {
 	Pos temp{ pos };
 	temp.x += dir();
 	--temp.y;
@@ -74,78 +77,70 @@ bool Pawn::isValid() {
 		return false;
 	}
 	if (captureRight() == endPos) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+			didCapture();
 				return true;
-			}
-			else {
-				return false;
-			}
 		}
 		else {
 			return false;
 		}
 	}
 	if (captureLeft() == endPos) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+			didCapture();
 				return true;
 			}
 			else {
 				return false;
 			}
 		}
-		else {
-			return false;
-		}
-	}
 	return false;
 }
 
 Knight::Knight(const PieceManager& ref) : Piece{ ref } {}
-Pos Knight::getUpRightJump() {
+inline Pos Knight::getUpRightJump() {
 	Pos temp{ pos };
 	temp.x += 2 * dir();
 	++temp.y;
 	return temp;
 }
-Pos Knight::getUpLeftJump() {
+inline Pos Knight::getUpLeftJump() {
 	Pos temp{ pos };
 	temp.x += 2 * dir();
 	--temp.y;
 	return temp;
 }
-Pos Knight::getDownRightJump() {
+inline Pos Knight::getDownRightJump() {
 	Pos temp{ pos };
 	temp.x -= 2 * dir();
 	++temp.y;
 	return temp;
 }
-Pos Knight::getDownLeftJump() {
+inline Pos Knight::getDownLeftJump() {
 	Pos temp{ pos };
 	temp.x -= 2 * dir();
 	--temp.y;
 	return temp;
 }
-Pos Knight::getRightUpJump() {
+inline Pos Knight::getRightUpJump() {
 	Pos temp{ pos };
 	temp.x += dir();
 	temp.y += 2;
 	return temp;
 }
-Pos Knight::getRightDownJump() {
+inline Pos Knight::getRightDownJump() {
 	Pos temp{ pos };
 	temp.x -= dir();
 	temp.y += 2;
 	return temp;
 }
-Pos Knight::getLeftUpJump() {
+inline Pos Knight::getLeftUpJump() {
 	Pos temp{ pos };
 	temp.x += dir();
 	temp.y -= 2;
 	return temp;
 }
-Pos Knight::getLeftDownJump() {
+inline Pos Knight::getLeftDownJump() {
 	Pos temp{ pos };
 	temp.x -= dir();
 	temp.y -= 2;
@@ -155,6 +150,7 @@ bool Knight::isValid() {
 	if (endPos == getUpRightJump()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
@@ -168,6 +164,7 @@ bool Knight::isValid() {
 	if (endPos == getUpLeftJump()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
@@ -181,6 +178,7 @@ bool Knight::isValid() {
 	if (endPos == getDownRightJump()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
@@ -194,6 +192,7 @@ bool Knight::isValid() {
 	if (endPos == getDownLeftJump()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
@@ -207,6 +206,7 @@ bool Knight::isValid() {
 	if (endPos == getRightUpJump()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
@@ -220,6 +220,7 @@ bool Knight::isValid() {
 	if (endPos == getRightDownJump()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
@@ -233,6 +234,7 @@ bool Knight::isValid() {
 	if (endPos == getLeftUpJump()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
@@ -246,6 +248,7 @@ bool Knight::isValid() {
 	if (endPos == getLeftDownJump()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
@@ -302,45 +305,45 @@ bool Bishop::isValid() {
 }
 
 King::King(const PieceManager& ref) : Piece{ ref } {}
-Pos King::forward() {
+inline Pos King::forward() {
 	Pos temp{ pos };
 	temp.x += dir();
 	return temp;
 }
-Pos King::backwards() {
+inline Pos King::backwards() {
 	Pos temp{ pos };
 	temp.x -= dir();
 	return temp;
 }
-Pos King::right() {
+inline Pos King::right() {
 	Pos temp{ pos };
 	++temp.y;
 	return temp;
 }
-Pos King::left() {
+inline Pos King::left() {
 	Pos temp{ pos };
 	--temp.y;
 	return temp;
 }
-Pos King::up_right() {
+inline Pos King::up_right() {
 	Pos temp{ pos };
 	temp.x += dir();
 	++temp.y;
 	return temp;
 }
-Pos King::up_left() {
+inline Pos King::up_left() {
 	Pos temp{ pos };
 	temp.x += dir();
 	--temp.y;
 	return temp;
 }
-Pos King::down_right() {
+inline Pos King::down_right() {
 	Pos temp{ pos };
 	temp.x -= dir();
 	++temp.y;
 	return temp;
 }
-Pos King::down_left() {
+inline Pos King::down_left() {
 	Pos temp{ pos };
 	temp.x -= dir();
 	--temp.y;
@@ -348,108 +351,68 @@ Pos King::down_left() {
 }
 bool King::isValid() {
 	if (endPos == forward()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
 				return true;
 			}
 			else {
 				return false;
 			}
-		}
-		else {
-			return true;
-		}
 	}
 	if (endPos == backwards()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
 				return true;
 			}
 			else {
 				return false;
 			}
-		}
-		else {
-			return true;
-		}
 	}
 	if (endPos == right()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
 				return true;
 			}
 			else {
 				return false;
 			}
-		}
-		else {
-			return true;
-		}
 	}
 	if (endPos == left()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
 				return true;
 			}
 			else {
 				return false;
 			}
-		}
-		else {
-			return true;
-		}
 	}
 	if (endPos == up_right()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
 				return true;
 			}
 			else {
 				return false;
 			}
-		}
-		else {
-			return true;
-		}
 	}
 	if (endPos == up_left()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
 				return true;
 			}
 			else {
 				return false;
 			}
-		}
-		else {
-			return true;
-		}
 	}
 	if (endPos == down_right()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
 				return true;
 			}
 			else {
 				return false;
 			}
-		}
-		else {
-			return true;
-		}
 	}
 	if (endPos == down_left()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
 				return true;
 			}
 			else {
 				return false;
 			}
-		}
-		else {
-			return true;
-		}
 	}
 	return false;
 }
