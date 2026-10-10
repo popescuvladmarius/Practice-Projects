@@ -18,7 +18,7 @@ public:
 	void setEndPos(Pos pos);
 	void setFlag(Flag input);
 	Flag getFlag() const;
-	Pos move();
+	void move();
 	int dir();
 	void setGraphics(char value);
 	char getGraphics();
@@ -63,6 +63,8 @@ public:
 };
 
 class King : public Piece {
+private:
+	bool isCastlingValid{ true };
 public:
 	King(const PieceManager& ref);
 	Pos forward();

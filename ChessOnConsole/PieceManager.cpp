@@ -124,4 +124,4 @@ PieceManager::PieceManager() :
 	}
 	std::vector<Piece*> PieceManager::getWhiteVector() { return whitePieces; }
 	std::vector<Piece*> PieceManager::getBlackVector() { return blackPieces; }
-	const std::array<std::array<Piece*, 8>, 8> PieceManager::getMasterArray() const { return masterArray; }
+	const std::array<std::array<Piece*, 8>, 8>& PieceManager::getMasterArray() const { return masterArray; }

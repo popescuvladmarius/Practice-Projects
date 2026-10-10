@@ -20,5 +20,5 @@ public:
 	PieceManager();
 	std::vector<Piece*> getWhiteVector();
 	std::vector<Piece*> getBlackVector();
-	const std::array<std::array<Piece*, 8>, 8> getMasterArray() const;
+	const std::array<std::array<Piece*, 8>, 8>& getMasterArray() const;
 };

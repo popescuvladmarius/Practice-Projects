@@ -7,9 +7,8 @@ void Piece::setPos(int x, int y) { pos.x = x; pos.y = y; }
 void Piece::setEndPos(Pos pos) { endPos = pos; }
 void Piece::setFlag(Flag input) { flag = input; }
 Flag Piece::getFlag() const { return flag; }
-Pos Piece::move() {
+void Piece::move() {
 	pos = endPos;
-	return pos;
 }
 int Piece::dir() {
 	if (this->getFlag() == Flag::white) {
