@@ -7,9 +7,6 @@ class Pos;
 class Piece;
 class PieceManager {
 private:
-	int whiteCount{ 16 };
-	int blackCount{ 16 };
-	int totalCount{ whiteCount + blackCount };
 	Team whites;
 	Team blacks;
 	std::vector<Piece*> whitePieces;
@@ -23,5 +20,5 @@ public:
 	PieceManager();
 	std::vector<Piece*> getWhiteVector();
 	std::vector<Piece*> getBlackVector();
-	const std::array<std::array<Piece*, 8>, 8> getMasterArray() const;
+	const std::array<std::array<Piece*, 8>, 8>& getMasterArray() const;
 };
