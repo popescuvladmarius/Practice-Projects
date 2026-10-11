@@ -31,12 +31,8 @@ enum class Status {
 
 struct Move {
 	Pos move;
-<<<<<<< HEAD
 	Piece* piece;
-
-=======
 	char graphics;
->>>>>>> laptop
 };
 
 
