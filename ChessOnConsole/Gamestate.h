@@ -18,5 +18,5 @@ public:
 	bool getState();
 	void setStatus(Status input);
 	Status getStatus();
-	void addMove(Pos move, char graphics);
+	void addMove(Pos move, char graphics, bool capture);
 };

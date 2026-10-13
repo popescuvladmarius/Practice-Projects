@@ -8,6 +8,6 @@ void Gamestate::setState(bool input) { state = input; }
 bool Gamestate::getState() { return state; }
 void Gamestate::setStatus(Status input) { status = input; }
 Status Gamestate::getStatus() { return status; }
-void Gamestate::addMove(Pos move, char graphics) {
-	moveCollection.emplace_back(move, graphics);
+void Gamestate::addMove(Pos move, char graphics, bool capture) {
+	moveCollection.emplace_back(move, graphics, capture);
 }

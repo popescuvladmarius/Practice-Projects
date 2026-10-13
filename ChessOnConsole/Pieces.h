@@ -9,7 +9,6 @@ protected:
 	Pos endPos{};
 	Flag flag{};
 	bool capture{ false };
-	int i{ 1 };
 	char graphics{};
 	const PieceManager& piece_ref;
 public:

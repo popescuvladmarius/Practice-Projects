@@ -2,7 +2,7 @@
 #include "Pieces.h"
 
 bool isOnLeftDiag(Pos pos, Pos inputPos) {
-	if ((pos.y - pos.x) == (inputPos.y - inputPos.x)) {
+	if (((pos.y - pos.x) == (inputPos.y - inputPos.x)) && (pos != inputPos)) {
 		return true;
 	}
 	else {
@@ -10,7 +10,7 @@ bool isOnLeftDiag(Pos pos, Pos inputPos) {
 	}
 }
 bool isOnRightDiag(Pos pos, Pos inputPos) {
-	if ((std::abs(pos.y - pos.x) - std::abs(inputPos.y - inputPos.x)) % 2 == 0) {
+	if (((std::abs(pos.y - pos.x) - std::abs(inputPos.y - inputPos.x)) % 2 == 0) && (pos != inputPos)) {
 		return true;
 	}
 	else {
@@ -18,7 +18,7 @@ bool isOnRightDiag(Pos pos, Pos inputPos) {
 	}
 }
 bool isOnRow(Pos pos, Pos inputPos) {
-	if (pos.x == inputPos.x) {
+	if (pos.x == inputPos.x && pos.y != inputPos.y) {
 		return true;
 	}
 	else {
@@ -26,7 +26,7 @@ bool isOnRow(Pos pos, Pos inputPos) {
 	}
 }
 bool isOnCol(Pos pos, Pos inputPos) {
-	if (pos.y == inputPos.y) {
+	if (pos.y == inputPos.y && pos.x != inputPos.x) {
 		return true;
 	}
 	else {

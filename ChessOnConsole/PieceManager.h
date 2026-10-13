@@ -21,4 +21,9 @@ public:
 	std::vector<Piece*> getWhiteVector();
 	std::vector<Piece*> getBlackVector();
 	const std::array<std::array<Piece*, 8>, 8>& getMasterArray() const;
+	void destroyPiece(const Move& move) {
+		if (move.capture == true) {
+			masterArray[move.move.x][move.move.y] = nullptr;
+		}
+	}
 };

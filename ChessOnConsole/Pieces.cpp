@@ -12,10 +12,10 @@ void Piece::move() {
 }
 int Piece::dir() {
 	if (this->getFlag() == Flag::white) {
-		return -i;
+		return -1;
 	}
 	else {
-		return i;
+		return 1;
 	}
 }
 void Piece::setGraphics(char value) { graphics = value; }
@@ -265,6 +265,9 @@ Rook::Rook(const PieceManager& ref) : Piece{ ref } {}
 bool Rook::isValid() {
 	if (isOnRow(pos, endPos)) {
 		if (isMoveValidOnRow(pos, endPos, piece_ref.getMasterArray(), this)) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+				didCapture();
+			}
 			return true;
 		}
 		else {
@@ -273,6 +276,9 @@ bool Rook::isValid() {
 	}
 	if (isOnCol(pos, endPos)) {
 		if (isMoveValidOnCol(pos, endPos, piece_ref.getMasterArray(), this)) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+				didCapture();
+			}
 			return true;
 		}
 		else {
@@ -286,6 +292,9 @@ Bishop::Bishop(const PieceManager& ref) : Piece{ ref } {}
 bool Bishop::isValid() {
 	if (isOnLeftDiag(pos, endPos)) {
 		if (isMoveValidOnLeftDiag(pos, endPos, piece_ref.getMasterArray(), this)) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+				didCapture();
+			}
 			return true;
 		}
 		else {
@@ -294,6 +303,9 @@ bool Bishop::isValid() {
 	}
 	if (isOnRightDiag(pos, endPos)) {
 		if (isMoveValidOnRightDiag(pos, endPos, piece_ref.getMasterArray(), this)) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+				didCapture();
+			}
 			return true;
 		}
 		else {
@@ -350,68 +362,116 @@ inline Pos King::down_left() {
 }
 bool King::isValid() {
 	if (endPos == forward()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
 				return false;
+			}
+		}
+			else {
+				return true;
 			}
 	}
 	if (endPos == backwards()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
 				return false;
+			}
+		}
+			else {
+				return true;
 			}
 	}
 	if (endPos == right()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
 				return false;
 			}
+		}
+		else {
+			return true;
+		}
 	}
 	if (endPos == left()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
 				return false;
 			}
+		}
+		else {
+			return true;
+		}
 	}
 	if (endPos == up_right()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
 				return false;
 			}
+		}
+		else {
+			return true;
+		}
 	}
 	if (endPos == up_left()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
 				return false;
 			}
+		}
+		else {
+			return true;
+		}
 	}
 	if (endPos == down_right()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
 				return false;
 			}
+		}
+		else {
+			return true;
+		}
 	}
 	if (endPos == down_left()) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+				didCapture();
 				return true;
 			}
 			else {
 				return false;
 			}
+		}
+		else {
+			return true;
+		}
 	}
 	return false;
 }
@@ -420,6 +480,9 @@ Queen::Queen(const PieceManager& ref) : Piece{ ref } {}
 bool Queen::isValid() {
 	if (isOnRow(pos, endPos)) {
 		if (isMoveValidOnRow(pos, endPos, piece_ref.getMasterArray(), this)) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+				didCapture();
+			}
 			return true;
 		}
 		else {
@@ -428,6 +491,9 @@ bool Queen::isValid() {
 	}
 	if (isOnCol(pos, endPos)) {
 		if (isMoveValidOnCol(pos, endPos, piece_ref.getMasterArray(), this)) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+				didCapture();
+			}
 			return true;
 		}
 		else {
@@ -436,6 +502,9 @@ bool Queen::isValid() {
 	}
 	if (isOnRightDiag(pos, endPos)) {
 		if (isMoveValidOnRightDiag(pos, endPos, piece_ref.getMasterArray(), this)) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+				didCapture();
+			}
 			return true;
 		}
 		else {
@@ -444,6 +513,9 @@ bool Queen::isValid() {
 	}
 	if (isOnLeftDiag(pos, endPos)) {
 		if (isMoveValidOnLeftDiag(pos, endPos, piece_ref.getMasterArray(), this)) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
+				didCapture();
+			}
 			return true;
 		}
 		else {
