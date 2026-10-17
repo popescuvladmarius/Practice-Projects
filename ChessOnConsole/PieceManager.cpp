@@ -124,4 +124,16 @@ PieceManager::PieceManager() :
 	}
 	std::vector<Piece*> PieceManager::getWhiteVector() { return whitePieces; }
 	std::vector<Piece*> PieceManager::getBlackVector() { return blackPieces; }
+	const King& PieceManager::view_whiteKing() const { return whites.getKing(); }
+	const King& PieceManager::view_blackKing() const { return blacks.getKing(); }
+	const Queen& PieceManager::view_whiteQueen() const { return whites.getQueen(); }
+	const Queen& PieceManager::view_blackQueen() const { return blacks.getQueen(); }
+	const Rook& PieceManager::view_whiteRook_left() const { return whites.getRook(0); }
+	const Rook& PieceManager::view_whiteRook_right() const { return whites.getRook(1); }
+	const Rook& PieceManager::view_blackRook_left() const { return blacks.getRook(0); }
+	const Rook& PieceManager::view_blackRook_right() const { return blacks.getRook(1); }
 	const std::array<std::array<Piece*, 8>, 8>& PieceManager::getMasterArray() const { return masterArray; }
+	void PieceManager::updateArray(const Move& move) {
+		masterArray[move.move.x][move.move.y] = move.piece;
+		masterArray[move.oldPos.x][move.oldPos.y] = nullptr;
+	}

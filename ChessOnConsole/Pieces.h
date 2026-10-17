@@ -7,13 +7,15 @@ class Piece {
 protected:
 	Pos pos{};
 	Pos endPos{};
+	Pos oldPos{};
 	Flag flag{};
 	bool capture{ false };
 	char graphics{};
 	const PieceManager& piece_ref;
 public:
 	Piece(const PieceManager& ref);
-	Pos getPos();
+	Pos getPos() const;
+	Pos getOldPos() const;
 	void setPos(int x, int y);
 	void setEndPos(Pos pos);
 	void setFlag(Flag input);
@@ -21,9 +23,9 @@ public:
 	void move();
 	int dir();
 	void setGraphics(char value);
-	char getGraphics();
+	char getGraphics() const;
 	void didCapture();
-	bool checkCapture();
+	bool checkCapture() const;
 	void resetCapture();
 	virtual bool isValid() = 0;
 	virtual ~Piece() = default;
@@ -79,6 +81,7 @@ public:
 	inline Pos down_right();
 	inline Pos down_left();
 	bool isValid() override;
+	bool hasMoved();
 };
 
 class Queen : public Piece {

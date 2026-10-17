@@ -20,10 +20,14 @@ public:
 	PieceManager();
 	std::vector<Piece*> getWhiteVector();
 	std::vector<Piece*> getBlackVector();
+	const King& view_whiteKing() const;
+	const King& view_blackKing() const;
+	const Queen& view_whiteQueen() const;
+	const Queen& view_blackQueen() const;
+	const Rook& view_whiteRook_left() const;
+	const Rook& view_whiteRook_right() const;
+	const Rook& view_blackRook_left() const;
+	const Rook& view_blackRook_right() const;
 	const std::array<std::array<Piece*, 8>, 8>& getMasterArray() const;
-	void destroyPiece(const Move& move) {
-		if (move.capture == true) {
-			masterArray[move.move.x][move.move.y] = nullptr;
-		}
-	}
+	void updateArray(const Move& move);
 };

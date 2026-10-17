@@ -12,9 +12,15 @@ private:
 public:
 	Team(const PieceManager& ref);
 	King& getKing();
+	const King& getKing() const;
 	Queen& getQueen();
+	const Queen& getQueen() const;
 	Rook& getRook(int i);
+	const Rook& getRook(int i) const;
 	Bishop& getBishop(int i);
+	const Bishop& getBishop(int i) const;
 	Knight& getKnight(int i);
+	const Knight& getKnight(int i) const;
 	Pawn& getPawn(int i);
+	const Pawn& getPawn(int i) const;
 };

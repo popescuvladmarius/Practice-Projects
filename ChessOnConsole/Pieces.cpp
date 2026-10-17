@@ -2,12 +2,14 @@
 #include "PieceManager.h"
 
 Piece::Piece(const PieceManager& ref) : piece_ref{ ref } {}
-Pos Piece::getPos() { return pos; }
+Pos Piece::getPos() const { return pos; }
+Pos Piece::getOldPos() const { return oldPos; }
 void Piece::setPos(int x, int y) { pos.x = x; pos.y = y; }
 void Piece::setEndPos(Pos pos) { endPos = pos; }
 void Piece::setFlag(Flag input) { flag = input; }
 Flag Piece::getFlag() const { return flag; }
 void Piece::move() {
+	oldPos = pos;
 	pos = endPos;
 }
 int Piece::dir() {
@@ -19,9 +21,9 @@ int Piece::dir() {
 	}
 }
 void Piece::setGraphics(char value) { graphics = value; }
-char Piece::getGraphics() { return graphics; }
+char Piece::getGraphics() const { return graphics; }
 void Piece::didCapture() { capture = true; }
-bool Piece::checkCapture() { return capture; }
+bool Piece::checkCapture() const { return capture; }
 void Piece::resetCapture() { capture = false; }
 
 Pawn::Pawn(const PieceManager& ref) : Piece{ ref } {}
@@ -474,6 +476,9 @@ bool King::isValid() {
 		}
 	}
 	return false;
+}
+bool King::hasMoved() {
+
 }
 
 Queen::Queen(const PieceManager& ref) : Piece{ ref } {}

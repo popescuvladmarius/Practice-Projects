@@ -1,7 +1,6 @@
 #pragma once
-#include "Objects.h"
+#include "Pieces.h"
 
-class Piece;
 class Gamestate {
 private:
 	bool state{ true };
@@ -10,13 +9,15 @@ private:
 	Piece* selected_piece{ nullptr };
 	std::vector<Move> moveCollection;
 public:
-	Turn getTurn();
+	Turn getTurn() const;
 	void setTurn(Turn input);
 	void setSelectedPiece(Piece* piece);
 	Piece* getSelectedPiece();
 	void setState(bool input);
-	bool getState();
+	bool getState() const;
 	void setStatus(Status input);
-	Status getStatus();
-	void addMove(Pos move, char graphics, bool capture);
+	Status getStatus() const;
+	void addMove(const Piece* const piece);
+	const Move& readMove();
+	const std::vector<Move>& getMoveCollection();
 };
