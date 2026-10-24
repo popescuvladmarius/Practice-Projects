@@ -11,6 +11,9 @@ Flag Piece::getFlag() const { return flag; }
 void Piece::move() {
 	oldPos = pos;
 	pos = endPos;
+	if (!moved) {
+		moved = true;
+	}
 }
 int Piece::dir() {
 	if (this->getFlag() == Flag::white) {
@@ -25,6 +28,7 @@ char Piece::getGraphics() const { return graphics; }
 void Piece::didCapture() { capture = true; }
 bool Piece::checkCapture() const { return capture; }
 void Piece::resetCapture() { capture = false; }
+bool Piece::hasMovedOnce() const { return moved; }
 
 Pawn::Pawn(const PieceManager& ref) : Piece{ ref } {}
 inline Pos Pawn::forward() {
@@ -262,6 +266,9 @@ bool Knight::isValid() {
 	}
 	return false;
 }
+bool Knight::checkScanner(){
+	if ()
+}
 
 Rook::Rook(const PieceManager& ref) : Piece{ ref } {}
 bool Rook::isValid() {
@@ -476,9 +483,6 @@ bool King::isValid() {
 		}
 	}
 	return false;
-}
-bool King::hasMoved() {
-
 }
 
 Queen::Queen(const PieceManager& ref) : Piece{ ref } {}
