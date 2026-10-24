@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 #include <cmath>
+#include <unordered_map>
 #include "GeneralFunctions.h"
 
 struct Pos {
@@ -35,5 +36,4 @@ struct Move {
 	Piece* piece;
 	bool capture;
 };
-
 

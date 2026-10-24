@@ -10,6 +10,7 @@ protected:
 	Pos oldPos{};
 	Flag flag{};
 	bool capture{ false };
+	bool moved{ false };
 	char graphics{};
 	const PieceManager& piece_ref;
 public:
@@ -27,6 +28,7 @@ public:
 	void didCapture();
 	bool checkCapture() const;
 	void resetCapture();
+	bool hasMoved() const;
 	virtual bool isValid() = 0;
 	virtual ~Piece() = default;
 };
@@ -68,8 +70,6 @@ public:
 };
 
 class King : public Piece {
-private:
-	bool isCastlingValid{ true };
 public:
 	King(const PieceManager& ref);
 	inline Pos forward();
@@ -81,7 +81,6 @@ public:
 	inline Pos down_right();
 	inline Pos down_left();
 	bool isValid() override;
-	bool hasMoved();
 };
 
 class Queen : public Piece {

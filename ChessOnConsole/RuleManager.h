@@ -6,9 +6,10 @@ class RuleManager {
 private:
 	const PieceManager& piece_ref;
 	const Gamestate& state_ref;
+	bool isKingSideCastlingPossible{ true };
+	bool isQueenSideCastlingPossible{ true };
 public:
 	RuleManager(const PieceManager& piece, const Gamestate& state);
-	bool kingsideCastling();
-	bool queensideCastling();
-	bool enpassant();
+	bool kingSideCastlingAbsoluteCondition();
+	
 };

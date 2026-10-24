@@ -6,14 +6,9 @@ RuleManager::RuleManager(const PieceManager& piece, const Gamestate& state) : pi
 bool RuleManager::kingsideCastling() {
 	switch (state_ref.getTurn()) {
 	case Turn::white:
-		if (piece_ref.view_whiteKing().getPos().x == 7 && piece_ref.view_whiteKing().getPos().y == 4) {
+		if (piece_ref.view_whiteKing().hasMoved() || piece_ref.view_whiteRook_right().hasMoved() ) {
 
 		}
 	}
 }
-bool RuleManager::queensideCastling() {
 
-}
-bool RuleManager::enpassant() {
-
-}
