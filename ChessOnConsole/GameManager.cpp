@@ -1,6 +1,6 @@
 #include "GameManager.h"
 
-bool GameManager::checkState() {
+bool GameManager::isStateValid() {
 	if (gamestate.getState()) {
 		return true;
 	}
@@ -65,7 +65,7 @@ void GameManager::nextTurn() {
 	}
 }
 void GameManager::run() {
-	while (checkState()) {
+	while (isStateValid()) {
 			board.render();
 			selectPiece();
 			selectMove();

@@ -86,9 +86,9 @@ bool isMoveValidOnLeftDiag(Pos pos, Pos endPos, const std::array<std::array<Piec
 		}
 	}
 	if (endPos.x > pos.x) {	
-		int i = 1;
-		pos.x += i;
-		pos.y += i;
+		int i = 0;
+		pos.x += 1;
+		pos.y += 1;
 		while (pos.x < endPos.x) {
 			if (array[pos.x + i][pos.y + i]) {
 				return false;
@@ -100,9 +100,9 @@ bool isMoveValidOnLeftDiag(Pos pos, Pos endPos, const std::array<std::array<Piec
 		return true;
 	}
 	if (endPos.x < pos.x) {
-		int i = 1;
-		pos.x -= i;
-		pos.y -= i;
+		int i = 0;
+		pos.x -= 1;
+		pos.y -= 1;
 		while (pos.x > endPos.x) {
 			if (array[pos.x - i][pos.y - i]) {
 				return false;
@@ -121,9 +121,9 @@ bool isMoveValidOnRightDiag(Pos pos, Pos endPos, const std::array<std::array<Pie
 		}
 	}
 	if (endPos.x < pos.x) {
-		int i = 1;
-		pos.x -= i;
-		pos.y += i;
+		int i = 0;
+		pos.x -= 1;
+		pos.y += 1;
 		while (pos.x > endPos.x) {
 			if (array[pos.x - i][pos.y + i]) {
 				return false;
@@ -135,9 +135,9 @@ bool isMoveValidOnRightDiag(Pos pos, Pos endPos, const std::array<std::array<Pie
 		return true;
 	}
 	if (endPos.x > pos.x) {
-		int i = 1;
-		pos.x += i;
-		pos.y -= i;
+		int i = 0;
+		pos.x += 1;
+		pos.y -= 1;
 		while (pos.x < endPos.x) {
 			if (array[pos.x + i][pos.y - i]) {
 				return false;

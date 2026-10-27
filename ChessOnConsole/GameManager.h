@@ -14,7 +14,7 @@ private:
 	Board board;
 	RuleManager rules;
 public:
-	bool checkState();
+	bool isStateValid();
 	void selectPiece();
 	void selectMove();
 	void nextTurn();

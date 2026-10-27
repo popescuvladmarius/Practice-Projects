@@ -101,6 +101,15 @@ bool Pawn::isValid() {
 		}
 	return false;
 }
+bool Pawn::checkScanner() {
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[captureRight().x][captureRight().y]) && piece_ref.getMasterArray()[captureRight().x][captureRight().y]->getFlag() != this->getFlag()) {
+		return true;
+	}
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[captureLeft().x][captureLeft().y]) && piece_ref.getMasterArray()[captureLeft().x][captureLeft().y]->getFlag() != this->getFlag()) {
+		return true;
+	}
+	return false;
+}
 
 Knight::Knight(const PieceManager& ref) : Piece{ ref } {}
 inline Pos Knight::getUpRightJump() {
@@ -267,7 +276,31 @@ bool Knight::isValid() {
 	return false;
 }
 bool Knight::checkScanner(){
-	if ()
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getUpRightJump().x][getUpRightJump().y]) && piece_ref.getMasterArray()[getUpRightJump().x][getUpRightJump().y]->getFlag() != this->getFlag()) {
+		return true;
+	}
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getUpLeftJump().x][getUpLeftJump().y]) && piece_ref.getMasterArray()[getUpLeftJump().x][getUpLeftJump().y]->getFlag() != this->getFlag()) {
+		return true;
+	}
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getDownRightJump().x][getDownRightJump().y]) && piece_ref.getMasterArray()[getDownRightJump().x][getDownRightJump().y]->getFlag() != this->getFlag()) {
+		return true;
+	}
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getDownLeftJump().x][getDownLeftJump().y]) && piece_ref.getMasterArray()[getDownLeftJump().x][getDownLeftJump().y]->getFlag() != this->getFlag()) {
+		return true;
+	}
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getRightUpJump().x][getRightUpJump().y]) && piece_ref.getMasterArray()[getRightUpJump().x][getRightUpJump().y]->getFlag() != this->getFlag()) {
+		return true;
+	}
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getRightDownJump().x][getRightDownJump().y]) && piece_ref.getMasterArray()[getRightDownJump().x][getRightDownJump().y]->getFlag() != this->getFlag()) {
+		return true;
+	}
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getLeftUpJump().x][getLeftUpJump().y]) && piece_ref.getMasterArray()[getLeftUpJump().x][getLeftUpJump().y]->getFlag() != this->getFlag()) {
+		return true;
+	}
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getLeftDownJump().x][getLeftDownJump().y]) && piece_ref.getMasterArray()[getLeftDownJump().x][getLeftDownJump().y]->getFlag() != this->getFlag()) {
+		return true;
+	}
+	return false;
 }
 
 Rook::Rook(const PieceManager& ref) : Piece{ ref } {}
@@ -296,6 +329,149 @@ bool Rook::isValid() {
 	}
 	return false;
 }
+bool Rook::checkScanner() {
+	int counter{ 0 };
+	switch (flag) {
+	case Flag::white:
+		if (piece_ref.view_blackKing().getPos().x == pos.x) {
+			int end = piece_ref.view_blackKing().getPos().y;
+			if (end > pos.y) {
+				for (int i = pos.y; i < end; ++i) {
+					if (piece_ref.getMasterArray()[pos.x][i]) {
+						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::white) {
+							return false;
+						}
+						else {
+							++counter;
+						}
+					}
+				}
+			}
+			if (pos.y > end) {
+				for (int i = pos.y; i > end; --i) {
+					if (piece_ref.getMasterArray()[pos.x][i]) {
+						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::white) {
+							return false;
+						}
+						else {
+							++counter;
+						}
+					}
+				}
+			}
+			if (counter == 0) return true;
+			if (counter == 1) {
+				//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
+				return false;
+			}
+			if (counter > 1) return false;
+		}
+		if (piece_ref.view_blackKing().getPos().y == pos.y) {
+			int end = piece_ref.view_blackKing().getPos().x;
+			if (end > pos.x) {
+				for (int i = pos.x; i < end; ++i) {
+					if (piece_ref.getMasterArray()[i][pos.y]) {
+						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::white) {
+							return false;
+						}
+						else {
+							++counter;
+						}
+					}
+				}
+			}
+			if (pos.x > end) {
+				for (int i = pos.x; i > end; --i) {
+					if (piece_ref.getMasterArray()[i][pos.y]) {
+						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::white) {
+							return false;
+						}
+						else {
+							++counter;
+						}
+					}
+				}
+			}
+			if (counter == 0) return true;
+			if (counter == 1) {
+				//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
+				return false;
+			}
+			if (counter > 1) return false;
+		}
+		return false;
+		break;
+	case Flag::black:
+		if (piece_ref.view_whiteKing().getPos().x == pos.x) {
+			int end = piece_ref.view_whiteKing().getPos().y;
+			if (end > pos.y) {
+				for (int i = pos.y; i < end; ++i) {
+					if (piece_ref.getMasterArray()[pos.x][i]) {
+						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::black) {
+							return false;
+						}
+						else {
+							++counter;
+						}
+					}
+				}
+			}
+			if (pos.y > end) {
+				for (int i = pos.y; i > end; --i) {
+					if (piece_ref.getMasterArray()[pos.x][i]) {
+						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::black) {
+							return false;
+						}
+						else {
+							++counter;
+						}
+					}
+				}
+			}
+			if (counter == 0) return true;
+			if (counter == 1) {
+				//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
+				return false;
+			}
+			if (counter > 1) return false;
+		}
+		if (piece_ref.view_whiteKing().getPos().y == pos.y) {
+			int end = piece_ref.view_whiteKing().getPos().x;
+			if (end > pos.x) {
+				for (int i = pos.x; i < end; ++i) {
+					if (piece_ref.getMasterArray()[i][pos.y]) {
+						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::black) {
+							return false;
+						}
+						else {
+							++counter;
+						}
+					}
+				}
+			}
+			if (pos.x > end) {
+				for (int i = pos.x; i > end; --i) {
+					if (piece_ref.getMasterArray()[i][pos.y]) {
+						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::black) {
+							return false;
+						}
+						else {
+							++counter;
+						}
+					}
+				}
+			}
+			if (counter == 0) return true;
+			if (counter == 1) {
+				//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
+				return false;
+			}
+			if (counter > 1) return false;
+		}
+		return false;
+		break;
+	}
+}
 
 Bishop::Bishop(const PieceManager& ref) : Piece{ ref } {}
 bool Bishop::isValid() {
@@ -322,6 +498,21 @@ bool Bishop::isValid() {
 		}
 	}
 	return false;
+}
+bool Bishop::checkScanner() {
+	switch (flag) {
+	case Flag::white:
+		if (isOnLeftDiag(pos, piece_ref.view_blackKing().getPos())) {
+			if (pos.x > piece_ref.view_blackKing().getPos().x) {
+				int i = 1;
+				int x = pos.x;
+				int y = pos.y;
+				while (x > piece_ref.view_blackKing().getPos().x) {
+
+				}
+			}
+		}
+	}
 }
 
 King::King(const PieceManager& ref) : Piece{ ref } {}

@@ -2,6 +2,7 @@
 
 class PieceManager;
 class Gamestate;
+
 class RuleManager {
 private:
 const PieceManager& piece_ref;

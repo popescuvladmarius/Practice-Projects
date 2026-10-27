@@ -11,6 +11,7 @@ protected:
 	Flag flag{};
 	bool capture{ false };
 	bool moved{ false };
+	bool locked{ false };
 	char graphics{};
 	const PieceManager& piece_ref;
 public:
@@ -29,6 +30,8 @@ public:
 	bool checkCapture() const;
 	void resetCapture();
 	bool hasMovedOnce() const;
+	bool lock();
+	bool unlock();
 	virtual bool isValid() = 0;
 	virtual bool checkScanner() = 0;
 	virtual ~Piece() = default;
