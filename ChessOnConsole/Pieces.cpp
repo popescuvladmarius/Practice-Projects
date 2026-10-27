@@ -336,7 +336,7 @@ bool Rook::checkScanner() {
 		if (piece_ref.view_blackKing().getPos().x == pos.x) {
 			int end = piece_ref.view_blackKing().getPos().y;
 			if (end > pos.y) {
-				for (int i = pos.y; i < end; ++i) {
+				for (int i = pos.y + 1; i < end; ++i) {
 					if (piece_ref.getMasterArray()[pos.x][i]) {
 						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::white) {
 							return false;
@@ -348,7 +348,7 @@ bool Rook::checkScanner() {
 				}
 			}
 			if (pos.y > end) {
-				for (int i = pos.y; i > end; --i) {
+				for (int i = pos.y - 1; i > end; --i) {
 					if (piece_ref.getMasterArray()[pos.x][i]) {
 						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::white) {
 							return false;
@@ -369,7 +369,7 @@ bool Rook::checkScanner() {
 		if (piece_ref.view_blackKing().getPos().y == pos.y) {
 			int end = piece_ref.view_blackKing().getPos().x;
 			if (end > pos.x) {
-				for (int i = pos.x; i < end; ++i) {
+				for (int i = pos.x + 1; i < end; ++i) {
 					if (piece_ref.getMasterArray()[i][pos.y]) {
 						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::white) {
 							return false;
@@ -381,7 +381,7 @@ bool Rook::checkScanner() {
 				}
 			}
 			if (pos.x > end) {
-				for (int i = pos.x; i > end; --i) {
+				for (int i = pos.x - 1; i > end; --i) {
 					if (piece_ref.getMasterArray()[i][pos.y]) {
 						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::white) {
 							return false;
@@ -405,7 +405,7 @@ bool Rook::checkScanner() {
 		if (piece_ref.view_whiteKing().getPos().x == pos.x) {
 			int end = piece_ref.view_whiteKing().getPos().y;
 			if (end > pos.y) {
-				for (int i = pos.y; i < end; ++i) {
+				for (int i = pos.y + 1; i < end; ++i) {
 					if (piece_ref.getMasterArray()[pos.x][i]) {
 						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::black) {
 							return false;
@@ -417,7 +417,7 @@ bool Rook::checkScanner() {
 				}
 			}
 			if (pos.y > end) {
-				for (int i = pos.y; i > end; --i) {
+				for (int i = pos.y - 1; i > end; --i) {
 					if (piece_ref.getMasterArray()[pos.x][i]) {
 						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::black) {
 							return false;
@@ -438,7 +438,7 @@ bool Rook::checkScanner() {
 		if (piece_ref.view_whiteKing().getPos().y == pos.y) {
 			int end = piece_ref.view_whiteKing().getPos().x;
 			if (end > pos.x) {
-				for (int i = pos.x; i < end; ++i) {
+				for (int i = pos.x + 1; i < end; ++i) {
 					if (piece_ref.getMasterArray()[i][pos.y]) {
 						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::black) {
 							return false;
@@ -450,7 +450,7 @@ bool Rook::checkScanner() {
 				}
 			}
 			if (pos.x > end) {
-				for (int i = pos.x; i > end; --i) {
+				for (int i = pos.x - 1; i > end; --i) {
 					if (piece_ref.getMasterArray()[i][pos.y]) {
 						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::black) {
 							return false;
@@ -504,11 +504,13 @@ bool Bishop::checkScanner() {
 	case Flag::white:
 		if (isOnLeftDiag(pos, piece_ref.view_blackKing().getPos())) {
 			if (pos.x > piece_ref.view_blackKing().getPos().x) {
-				int i = 1;
-				int x = pos.x;
-				int y = pos.y;
+				int i = 0;
+				int x = pos.x - 1;
+				int y = pos.y - 1;
 				while (x > piece_ref.view_blackKing().getPos().x) {
+					if (piece_ref.getMasterArray()[x - i][y - i]) {
 
+					}
 				}
 			}
 		}
