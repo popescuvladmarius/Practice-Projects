@@ -12,9 +12,34 @@ void Piece::move() {
 	oldPos = pos;
 	pos = endPos;
 	if (!moved) {
-		moved = true;
+		hasMovedOnce();
+		switch (flag) {
+		case Flag::white:
+			if (oldPos == piece_ref.getPieceMap().at("WhiteLeftRook")) {
+				piece_ref.notify_whiteLeftRookMoved();
+			}
+			if (oldPos == piece_ref.getPieceMap().at("WhiteRightRook")) {
+				piece_ref.notify_whiteRightRookMoved();
+			}
+			if (oldPos == piece_ref.getPieceMap().at("WhiteKing")) {
+				piece_ref.notify_whiteKingMoved();
+			}
+		break;
+		case Flag::black:
+			if (oldPos == piece_ref.getPieceMap().at("BlackLeftRook")) {
+				piece_ref.notify_blackLeftRookMoved();
+			}
+			if (oldPos == piece_ref.getPieceMap().at("BlackRightRook")) {
+				piece_ref.notify_blackRightRookMoved();
+			}
+			if (oldPos == piece_ref.getPieceMap().at("BlackKing")) {
+				piece_ref.notify_blackKingMoved();
+			}
+			break;
+		}
 	}
 }
+
 int Piece::dir() {
 	if (this->getFlag() == Flag::white) {
 		return -1;
@@ -28,7 +53,7 @@ char Piece::getGraphics() const { return graphics; }
 void Piece::didCapture() { capture = true; }
 bool Piece::checkCapture() const { return capture; }
 void Piece::resetCapture() { capture = false; }
-bool Piece::hasMovedOnce() const { return moved; }
+void Piece::hasMovedOnce() { moved = true; }
 
 Pawn::Pawn(const PieceManager& ref) : Piece{ ref } {}
 inline Pos Pawn::forward() {
@@ -63,7 +88,7 @@ bool Pawn::isValid() {
 		}
 	}
 	if (forwardDouble() == endPos) {
-		if (this->getFlag() == Flag::white && this->getPos().x == 6) {
+		if (flag == Flag::white && pos.x == 6) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x + 1][endPos.y]) {
 				return false;
 			}
@@ -71,7 +96,7 @@ bool Pawn::isValid() {
 				return true;
 			}
 		}
-		if (this->getFlag() == Flag::black && this->getPos().x == 1) {
+		if (flag == Flag::black && pos.x == 1) {
 			if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x - 1][endPos.y]) {
 				return false;
 			}
@@ -82,7 +107,7 @@ bool Pawn::isValid() {
 		return false;
 	}
 	if (captureRight() == endPos) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != flag) {
 			didCapture();
 				return true;
 		}
@@ -91,7 +116,7 @@ bool Pawn::isValid() {
 		}
 	}
 	if (captureLeft() == endPos) {
-		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+		if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != flag) {
 			didCapture();
 				return true;
 			}
@@ -102,13 +127,74 @@ bool Pawn::isValid() {
 	return false;
 }
 bool Pawn::checkScanner() {
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[captureRight().x][captureRight().y]) && piece_ref.getMasterArray()[captureRight().x][captureRight().y]->getFlag() != this->getFlag()) {
-		return true;
+	switch (flag) {
+	case Flag::white:
+		if (captureRight() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (captureLeft() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		return false;
+		break;
+	case Flag::black:
+		if (captureRight() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (captureLeft() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		return false;
+		break;
 	}
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[captureLeft().x][captureLeft().y]) && piece_ref.getMasterArray()[captureLeft().x][captureLeft().y]->getFlag() != this->getFlag()) {
-		return true;
+}
+bool Pawn::kingsideScanner() {
+	switch (flag) {
+	case Flag::white:
+		std::array<Pos, 2> blackSquares{ {
+		{0, 5},
+		{0, 6}
+} };
+		if (captureRight() == blackSquares[0] || captureRight() == blackSquares[1]) {
+			return true;
+		}
+		if (captureLeft() == blackSquares[0] || captureLeft() == blackSquares[1]) {
+			return true;
+		}
+		return false;
+		break;
+	case Flag::black:
+		std::array<Pos, 2> whiteSquares{ {
+		{7, 5},
+		{7, 6}
+} };
+		if (captureRight() == whiteSquares[0] || captureRight() == whiteSquares[1]) {
+			return true;
+		}
+		if (captureLeft() == whiteSquares[0] || captureLeft() == whiteSquares[1]) {
+			return true;
+		}
+		return false;
+		break;
 	}
-	return false;
+}
+bool Pawn::queensideScanner() {
+	switch (flag) {
+	case Flag::white:
+		std::array<Pos, 2> blackSquares{ {
+			{0, 2},
+			{0, 3}
+} };
+
+		break;
+	case Flag::black:
+		std::array<Pos, 2> whitequares{ {
+			{7, 2},
+			{7, 3}
+} };
+
+		break;
+	}
 }
 
 Knight::Knight(const PieceManager& ref) : Piece{ ref } {}
@@ -275,32 +361,195 @@ bool Knight::isValid() {
 	}
 	return false;
 }
-bool Knight::checkScanner(){
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getUpRightJump().x][getUpRightJump().y]) && piece_ref.getMasterArray()[getUpRightJump().x][getUpRightJump().y]->getFlag() != this->getFlag()) {
-		return true;
+bool Knight::checkScanner() {
+	switch (flag) {
+	case Flag::white:
+		if (getUpRightJump() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (getUpLeftJump() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (getDownRightJump() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (getDownLeftJump() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (getRightUpJump() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (getRightDownJump() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (getLeftUpJump() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (getLeftDownJump() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		return false;
+		break;
+	case Flag::black:
+		if (getUpRightJump() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (getUpLeftJump() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (getDownRightJump() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (getDownLeftJump() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (getRightUpJump() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (getRightDownJump() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (getLeftUpJump() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (getLeftDownJump() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		return false;
+		break;
 	}
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getUpLeftJump().x][getUpLeftJump().y]) && piece_ref.getMasterArray()[getUpLeftJump().x][getUpLeftJump().y]->getFlag() != this->getFlag()) {
-		return true;
+}
+bool Knight::kingsideScanner() {
+	switch (flag) {
+	case Flag::white:
+		std::array<Pos, 2> blackSquares{ {
+		{0, 5},
+		{0, 6}
+} };
+		if (getUpRightJump() == blackSquares[0] || getUpRightJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getUpLeftJump() == blackSquares[0] || getUpLeftJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getDownRightJump() == blackSquares[0] || getDownRightJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getDownLeftJump() == blackSquares[0] || getDownLeftJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getRightUpJump() == blackSquares[0] || getRightUpJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getRightDownJump() == blackSquares[0] || getRightDownJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getLeftUpJump() == blackSquares[0] || getLeftUpJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getLeftDownJump() == blackSquares[0] || getLeftDownJump() == blackSquares[1]) {
+			return true;
+		}
+		return false;
+		break;
+	case Flag::black:
+		std::array<Pos, 2> whiteSquares{ {
+		{7, 5},
+		{7, 6}
+	} };
+		if (getUpRightJump() == whiteSquares[0] || getUpRightJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getUpLeftJump() == whiteSquares[0] || getUpLeftJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getDownRightJump() == whiteSquares[0] || getDownRightJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getDownLeftJump() == whiteSquares[0] || getDownLeftJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getRightUpJump() == whiteSquares[0] || getRightUpJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getRightDownJump() == whiteSquares[0] || getRightDownJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getLeftUpJump() == whiteSquares[0] || getLeftUpJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getLeftDownJump() == whiteSquares[0] || getLeftDownJump() == whiteSquares[1]) {
+			return true;
+		}
+		return false;
+		break;
 	}
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getDownRightJump().x][getDownRightJump().y]) && piece_ref.getMasterArray()[getDownRightJump().x][getDownRightJump().y]->getFlag() != this->getFlag()) {
-		return true;
+}
+bool Knight::queensideScanner() {
+	switch (flag) {
+	case Flag::white:
+		std::array<Pos, 2> blackSquares{ {
+			{0, 2},
+			{0, 3}
+} };
+		if (getUpRightJump() == blackSquares[0] || getUpRightJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getUpLeftJump() == blackSquares[0] || getUpLeftJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getDownRightJump() == blackSquares[0] || getDownRightJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getDownLeftJump() == blackSquares[0] || getDownLeftJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getRightUpJump() == blackSquares[0] || getRightUpJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getRightDownJump() == blackSquares[0] || getRightDownJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getLeftUpJump() == blackSquares[0] || getLeftUpJump() == blackSquares[1]) {
+			return true;
+		}
+		if (getLeftDownJump() == blackSquares[0] || getLeftDownJump() == blackSquares[1]) {
+			return true;
+		}
+		return false;
+		break;
+	case Flag::black:
+		std::array<Pos, 2> whiteSquares{ {
+			{7, 2},
+			{7, 3}
+} };
+		if (getUpRightJump() == whiteSquares[0] || getUpRightJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getUpLeftJump() == whiteSquares[0] || getUpLeftJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getDownRightJump() == whiteSquares[0] || getDownRightJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getDownLeftJump() == whiteSquares[0] || getDownLeftJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getRightUpJump() == whiteSquares[0] || getRightUpJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getRightDownJump() == whiteSquares[0] || getRightDownJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getLeftUpJump() == whiteSquares[0] || getLeftUpJump() == whiteSquares[1]) {
+			return true;
+		}
+		if (getLeftDownJump() == whiteSquares[0] || getLeftDownJump() == whiteSquares[1]) {
+			return true;
+		}
+		return false;
+		break;
 	}
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getDownLeftJump().x][getDownLeftJump().y]) && piece_ref.getMasterArray()[getDownLeftJump().x][getDownLeftJump().y]->getFlag() != this->getFlag()) {
-		return true;
-	}
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getRightUpJump().x][getRightUpJump().y]) && piece_ref.getMasterArray()[getRightUpJump().x][getRightUpJump().y]->getFlag() != this->getFlag()) {
-		return true;
-	}
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getRightDownJump().x][getRightDownJump().y]) && piece_ref.getMasterArray()[getRightDownJump().x][getRightDownJump().y]->getFlag() != this->getFlag()) {
-		return true;
-	}
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getLeftUpJump().x][getLeftUpJump().y]) && piece_ref.getMasterArray()[getLeftUpJump().x][getLeftUpJump().y]->getFlag() != this->getFlag()) {
-		return true;
-	}
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[getLeftDownJump().x][getLeftDownJump().y]) && piece_ref.getMasterArray()[getLeftDownJump().x][getLeftDownJump().y]->getFlag() != this->getFlag()) {
-		return true;
-	}
-	return false;
 }
 
 Rook::Rook(const PieceManager& ref) : Piece{ ref } {}
@@ -330,145 +579,22 @@ bool Rook::isValid() {
 	return false;
 }
 bool Rook::checkScanner() {
-	int counter{ 0 };
 	switch (flag) {
 	case Flag::white:
-		if (piece_ref.view_blackKing().getPos().x == pos.x) {
-			int end = piece_ref.view_blackKing().getPos().y;
-			if (end > pos.y) {
-				for (int i = pos.y + 1; i < end; ++i) {
-					if (piece_ref.getMasterArray()[pos.x][i]) {
-						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::white) {
-							return false;
-						}
-						else {
-							++counter;
-						}
-					}
-				}
-			}
-			if (pos.y > end) {
-				for (int i = pos.y - 1; i > end; --i) {
-					if (piece_ref.getMasterArray()[pos.x][i]) {
-						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::white) {
-							return false;
-						}
-						else {
-							++counter;
-						}
-					}
-				}
-			}
-			if (counter == 0) return true;
-			if (counter == 1) {
-				//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
-				return false;
-			}
-			if (counter > 1) return false;
+		if (scanRow(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) || scanCol(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag)) {
+			return true;
 		}
-		if (piece_ref.view_blackKing().getPos().y == pos.y) {
-			int end = piece_ref.view_blackKing().getPos().x;
-			if (end > pos.x) {
-				for (int i = pos.x + 1; i < end; ++i) {
-					if (piece_ref.getMasterArray()[i][pos.y]) {
-						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::white) {
-							return false;
-						}
-						else {
-							++counter;
-						}
-					}
-				}
-			}
-			if (pos.x > end) {
-				for (int i = pos.x - 1; i > end; --i) {
-					if (piece_ref.getMasterArray()[i][pos.y]) {
-						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::white) {
-							return false;
-						}
-						else {
-							++counter;
-						}
-					}
-				}
-			}
-			if (counter == 0) return true;
-			if (counter == 1) {
-				//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
-				return false;
-			}
-			if (counter > 1) return false;
+		else {
+			return false;
 		}
-		return false;
 		break;
 	case Flag::black:
-		if (piece_ref.view_whiteKing().getPos().x == pos.x) {
-			int end = piece_ref.view_whiteKing().getPos().y;
-			if (end > pos.y) {
-				for (int i = pos.y + 1; i < end; ++i) {
-					if (piece_ref.getMasterArray()[pos.x][i]) {
-						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::black) {
-							return false;
-						}
-						else {
-							++counter;
-						}
-					}
-				}
-			}
-			if (pos.y > end) {
-				for (int i = pos.y - 1; i > end; --i) {
-					if (piece_ref.getMasterArray()[pos.x][i]) {
-						if (piece_ref.getMasterArray()[pos.x][i]->getFlag() == Flag::black) {
-							return false;
-						}
-						else {
-							++counter;
-						}
-					}
-				}
-			}
-			if (counter == 0) return true;
-			if (counter == 1) {
-				//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
-				return false;
-			}
-			if (counter > 1) return false;
+		if (scanRow(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) || scanCol(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag)) {
+			return true;
 		}
-		if (piece_ref.view_whiteKing().getPos().y == pos.y) {
-			int end = piece_ref.view_whiteKing().getPos().x;
-			if (end > pos.x) {
-				for (int i = pos.x + 1; i < end; ++i) {
-					if (piece_ref.getMasterArray()[i][pos.y]) {
-						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::black) {
-							return false;
-						}
-						else {
-							++counter;
-						}
-					}
-				}
-			}
-			if (pos.x > end) {
-				for (int i = pos.x - 1; i > end; --i) {
-					if (piece_ref.getMasterArray()[i][pos.y]) {
-						if (piece_ref.getMasterArray()[i][pos.y]->getFlag() == Flag::black) {
-							return false;
-						}
-						else {
-							++counter;
-						}
-					}
-				}
-			}
-			if (counter == 0) return true;
-			if (counter == 1) {
-				//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
-				return false;
-			}
-			if (counter > 1) return false;
+		else {
+			return false;
 		}
-		return false;
 		break;
 	}
 }
@@ -502,18 +628,21 @@ bool Bishop::isValid() {
 bool Bishop::checkScanner() {
 	switch (flag) {
 	case Flag::white:
-		if (isOnLeftDiag(pos, piece_ref.view_blackKing().getPos())) {
-			if (pos.x > piece_ref.view_blackKing().getPos().x) {
-				int i = 0;
-				int x = pos.x - 1;
-				int y = pos.y - 1;
-				while (x > piece_ref.view_blackKing().getPos().x) {
-					if (piece_ref.getMasterArray()[x - i][y - i]) {
-
-					}
-				}
-			}
+		if (scanLeftDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) || scanRightDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag)) {
+			return true;
 		}
+		else {
+			return false;
+		}
+		break;
+	case Flag::black:
+		if (scanLeftDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) || scanRightDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		break;
 	}
 }
 
@@ -565,7 +694,7 @@ inline Pos King::down_left() {
 bool King::isValid() {
 	if (endPos == forward()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != flag) {
 				didCapture();
 				return true;
 			}
@@ -579,7 +708,7 @@ bool King::isValid() {
 	}
 	if (endPos == backwards()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != flag) {
 				didCapture();
 				return true;
 			}
@@ -593,7 +722,7 @@ bool King::isValid() {
 	}
 	if (endPos == right()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != flag) {
 				didCapture();
 				return true;
 			}
@@ -607,7 +736,7 @@ bool King::isValid() {
 	}
 	if (endPos == left()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != flag) {
 				didCapture();
 				return true;
 			}
@@ -621,7 +750,7 @@ bool King::isValid() {
 	}
 	if (endPos == up_right()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != flag) {
 				didCapture();
 				return true;
 			}
@@ -635,7 +764,7 @@ bool King::isValid() {
 	}
 	if (endPos == up_left()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != flag) {
 				didCapture();
 				return true;
 			}
@@ -649,7 +778,7 @@ bool King::isValid() {
 	}
 	if (endPos == down_right()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != flag) {
 				didCapture();
 				return true;
 			}
@@ -663,7 +792,7 @@ bool King::isValid() {
 	}
 	if (endPos == down_left()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != this->getFlag()) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y]->getFlag() != flag) {
 				didCapture();
 				return true;
 			}
@@ -676,6 +805,64 @@ bool King::isValid() {
 		}
 	}
 	return false;
+}
+bool King::checkScanner() {  
+	switch (flag) {
+	case Flag::white:
+		if (forward() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (backwards() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (right() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (left() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (up_right() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (up_left() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (down_right() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		if (down_left() == piece_ref.view_blackKing().getPos()) {
+			return true;
+		}
+		return false;
+		break;
+	case Flag::black:
+		if (forward() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (backwards() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (right() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (left() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (up_right() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (up_left() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (down_right() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		if (down_left() == piece_ref.view_whiteKing().getPos()) {
+			return true;
+		}
+		return false;
+		break;
+	}
 }
 
 Queen::Queen(const PieceManager& ref) : Piece{ ref } {}
@@ -725,4 +912,30 @@ bool Queen::isValid() {
 		}
 	}
 	return false;
+}
+bool Queen::checkScanner() {
+	switch (flag) {
+	case Flag::white:
+		if (scanRow(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			scanCol(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			scanLeftDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			scanRightDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		break;
+	case Flag::black:
+		if (scanRow(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			scanCol(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			scanLeftDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			scanRightDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		break;
+	}
 }

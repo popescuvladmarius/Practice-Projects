@@ -3,32 +3,63 @@
 #include "Gamestate.h"
 
 RuleManager::RuleManager(const PieceManager& piece, const Gamestate& state) : piece_ref{piece}, state_ref{state} {}
-void RuleManager::kingsideAbsoluteCondition() {
+void RuleManager::whiteKingMoved() {
+	isWhiteKingsideCastlingPossible = false;
+	isWhiteQueensideCastlingPossible = false;
+}
+void RuleManager::whiteLeftRookMoved() {
+	isWhiteQueensideCastlingPossible = false;
+}
+void RuleManager::whiteRightRookMoved() {
+	isWhiteKingsideCastlingPossible = false;
+}
+void RuleManager::blackKingMoved() {
+	isBlackKingsideCastlingPossible = false;
+	isBlackQueensideCastlingPossible = false;
+}
+void RuleManager::blackLeftRookMoved() {
+	isBlackQueensideCastlingPossible = false;
+}
+void RuleManager::blackRightRookMoved() {
+	isBlackKingsideCastlingPossible = false;
+}
+bool RuleManager::kingsideAreEmpty() {
 	switch (state_ref.getTurn()) {
 	case Turn::white:
-		if (piece_ref.view_whiteKing().hasMovedOnce() || piece_ref.view_whiteRook_right().hasMovedOnce()) {
-			isWhiteKingsideCastlingPossible = false;
+		if (piece_ref.getMasterArray()[7][5] == nullptr && piece_ref.getMasterArray()[7][6] == nullptr) {
+			return true;
+		}
+		else {
+			return false;
 		}
 		break;
 	case Turn::black:
-		if (piece_ref.view_blackKing().hasMovedOnce() || piece_ref.view_blackRook_right().hasMovedOnce()) {
-			isBlackKingsideCastlingPossible = false;
+		if (piece_ref.getMasterArray()[0][5] == nullptr && piece_ref.getMasterArray()[0][6] == nullptr) {
+			return true;
+		}
+		else {
+			return false;
 		}
 		break;
 	}
 }
-void RuleManager::queensideAbosuluteCondition() {
+bool RuleManager::queensideAreEmpty() {
 	switch (state_ref.getTurn()) {
 	case Turn::white:
-		if (piece_ref.view_whiteQueen().hasMovedOnce() || piece_ref.view_whiteRook_left().hasMovedOnce()) {
-			isWhiteQueensideCastlingPossible = false;
+		if (piece_ref.getMasterArray()[7][1] == nullptr && piece_ref.getMasterArray()[7][2] == nullptr && piece_ref.getMasterArray()[7][3] == nullptr) {
+			return true;
+		}
+		else {
+			return false;
 		}
 		break;
 	case Turn::black:
-		if (piece_ref.view_blackQueen().hasMovedOnce() || piece_ref.view_blackRook_left().hasMovedOnce()) {
-			isBlackQueensideCastlingPossible = false;
+		if (piece_ref.getMasterArray()[0][1] == nullptr && piece_ref.getMasterArray()[0][2] == nullptr && piece_ref.getMasterArray()[0][3] == nullptr) {
+			return true;
+		}
+		else {
+			return false;
 		}
 		break;
 	}
 }
-

@@ -2,6 +2,7 @@
 #include <vector>
 #include <array>
 #include "Team.h"
+#include "RuleManager.h"
 
 class Pos;
 class Piece;
@@ -29,6 +30,7 @@ private:
 		{"WhitePawns", 6},
 		{"BlackPawns", 1}
 	};
+	RuleManager& rule_ref;
 	Team whites;
 	Team blacks;
 	std::vector<Piece*> whitePieces;
@@ -39,7 +41,7 @@ private:
 	void initializeBlacks();
 	void initializeArray();
 public:
-	PieceManager();
+	PieceManager(RuleManager& ref);
 	std::vector<Piece*> getWhiteVector();
 	std::vector<Piece*> getBlackVector();
 	const King& view_whiteKing() const;
@@ -50,8 +52,14 @@ public:
 	const Rook& view_whiteRook_right() const;
 	const Rook& view_blackRook_left() const;
 	const Rook& view_blackRook_right() const;
-	const std::unordered_map<std::string, Pos>& getPieceMap() { return pieceInitialPositions; }
-	const std::unordered_map<std::string, int>& getPawnMap() { return pawnInitialPositions; }
+	const std::unordered_map<std::string, Pos>& getPieceMap() const { return pieceInitialPositions; }
+	const std::unordered_map<std::string, int>& getPawnMap() const { return pawnInitialPositions; }
 	const std::array<std::array<Piece*, 8>, 8>& getMasterArray() const;
 	void updateArray(const Move& move);
+	void notify_whiteKingMoved() const;
+	void notify_whiteLeftRookMoved() const;
+	void notify_whiteRightRookMoved() const;
+	void notify_blackKingMoved() const;
+	void notify_blackLeftRookMoved() const;
+	void notify_blackRightRookMoved() const;
 };

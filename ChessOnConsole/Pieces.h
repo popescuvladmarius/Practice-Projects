@@ -29,11 +29,13 @@ public:
 	void didCapture();
 	bool checkCapture() const;
 	void resetCapture();
-	bool hasMovedOnce() const;
+	void hasMovedOnce();
 	bool lock();
 	bool unlock();
 	virtual bool isValid() = 0;
 	virtual bool checkScanner() = 0;
+	virtual bool kingsideScanner() = 0;
+	virtual bool queensideScanner() = 0;
 	virtual ~Piece() = default;
 };
 
@@ -46,6 +48,8 @@ public:
 	inline Pos captureLeft();
 	bool isValid() override;
 	bool checkScanner() override;
+	bool kingsideScanner() override;
+	bool queensideScanner() override;
 };
 
 class Knight : public Piece {
@@ -61,6 +65,8 @@ public:
 	inline Pos getLeftDownJump();
 	bool isValid() override;
 	bool checkScanner() override;
+	bool kingsideScanner() override;
+	bool queensideScanner() override;
 };
 
 class Rook : public Piece {
@@ -68,6 +74,8 @@ public:
 	Rook(const PieceManager& ref);
 	bool isValid() override;
 	bool checkScanner() override;
+	bool kingsideScanner() override;
+	bool queensideScanner() override;
 };
 
 class Bishop : public Piece {
@@ -75,6 +83,8 @@ public:
 	Bishop(const PieceManager& ref);
 	bool isValid() override;
 	bool checkScanner() override;
+	bool kingsideScanner() override;
+	bool queensideScanner() override;
 };
 
 class King : public Piece {
@@ -90,6 +100,8 @@ public:
 	inline Pos down_left();
 	bool isValid() override;
 	bool checkScanner() override;
+	bool kingsideScanner() override;
+	bool queensideScanner() override;
 };
 
 class Queen : public Piece {
@@ -97,4 +109,6 @@ public:
 	Queen(const PieceManager& ref);
 	bool isValid() override;
 	bool checkScanner() override;
+	bool kingsideScanner() override;
+	bool queensideScanner() override;
 };

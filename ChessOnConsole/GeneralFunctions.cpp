@@ -40,7 +40,8 @@ bool isMoveValidOnRow(Pos pos, Pos endPos, const std::array<std::array<Piece*, 8
 		}
 	}
 	if (endPos.y > pos.y) {
-		for (pos.y + 1; pos.y < endPos.y; ++pos.y) {
+		pos.y += 1;
+		for (pos.y; pos.y < endPos.y; ++pos.y) {
 			if (array[pos.x][pos.y]) {
 				return false;
 			}
@@ -48,7 +49,8 @@ bool isMoveValidOnRow(Pos pos, Pos endPos, const std::array<std::array<Piece*, 8
 		return true;
 	}
 	if (endPos.y < pos.y) {
-		for (pos.y - 1; pos.y > endPos.y; --pos.y) {
+		pos.y -= 1;
+		for (pos.y; pos.y > endPos.y; --pos.y) {
 			if (array[pos.x][pos.y]) {
 				return false;
 			}
@@ -63,7 +65,8 @@ bool isMoveValidOnCol(Pos pos, Pos endPos, const std::array<std::array<Piece*, 8
 		}
 	}
 	if (endPos.x > pos.x) {
-		for (pos.x + 1; pos.x < endPos.x; ++pos.x) {
+		pos.x += 1;
+		for (pos.x; pos.x < endPos.x; ++pos.x) {
 			if (array[pos.x][pos.y]) {
 				return false;
 			}
@@ -71,7 +74,8 @@ bool isMoveValidOnCol(Pos pos, Pos endPos, const std::array<std::array<Piece*, 8
 		return true;
 	}
 	if (endPos.x < pos.x) {
-		for (pos.x - 1; pos.x > endPos.x; --pos.x) {
+		pos.x -= 1;
+		for (pos.x; pos.x > endPos.x; --pos.x) {
 			if (array[pos.x][pos.y]) {
 				return false;
 			}
@@ -86,29 +90,29 @@ bool isMoveValidOnLeftDiag(Pos pos, Pos endPos, const std::array<std::array<Piec
 		}
 	}
 	if (endPos.x > pos.x) {	
-		int i = 0;
 		pos.x += 1;
 		pos.y += 1;
 		while (pos.x < endPos.x) {
-			if (array[pos.x + i][pos.y + i]) {
+			if (array[pos.x][pos.y]) {
 				return false;
 			}
 			else {
-				++i;
+				++pos.x;
+				++pos.y;
 			}
 		}
 		return true;
 	}
 	if (endPos.x < pos.x) {
-		int i = 0;
 		pos.x -= 1;
 		pos.y -= 1;
 		while (pos.x > endPos.x) {
-			if (array[pos.x - i][pos.y - i]) {
+			if (array[pos.x][pos.y]) {
 				return false;
 			}
 			else {
-				++i;
+				--pos.x;
+				--pos.y;
 			}
 		}
 		return true;
@@ -121,32 +125,204 @@ bool isMoveValidOnRightDiag(Pos pos, Pos endPos, const std::array<std::array<Pie
 		}
 	}
 	if (endPos.x < pos.x) {
-		int i = 0;
 		pos.x -= 1;
 		pos.y += 1;
 		while (pos.x > endPos.x) {
-			if (array[pos.x - i][pos.y + i]) {
+			if (array[pos.x][pos.y]) {
 				return false;
 			}
 			else {
-				++i;
+				--pos.x;
+				++pos.y;
 			}
 		}
 		return true;
 	}
 	if (endPos.x > pos.x) {
-		int i = 0;
 		pos.x += 1;
 		pos.y -= 1;
 		while (pos.x < endPos.x) {
-			if (array[pos.x + i][pos.y - i]) {
+			if (array[pos.x][pos.y]) {
 				return false;
 			}
 			else {
-				++i;
+				++pos.x;
+				--pos.y;
 			}
 		}
 		return true;
+	}
+}
+bool scanRow(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
+	int counter{ 0 };
+		if (kingPos.x == pos.x) {
+			if (kingPos.y > pos.y) {
+				pos.y += 1;
+				for (pos.y; pos.y < kingPos.y; ++pos.y) {
+					if (array[pos.x][pos.y]) {
+						if (array[pos.x][pos.y]->getFlag() == flag) {
+							return false;
+						}
+						else {
+							++counter;
+						}
+					}
+				}
+			}
+			if (kingPos.y < pos.y) {
+				pos.y -= 1;
+				for (pos.y; pos.y > kingPos.y; --pos.y) {
+					if (array[pos.x][pos.y]) {
+						if (array[pos.x][pos.y]->getFlag() == flag) {
+							return false;
+						}
+						else {
+							++counter;
+						}
+					}
+				}
+			}
+			if (counter == 0) return true;
+			if (counter == 1) {
+				//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
+				return false;
+			}
+			if (counter > 1) return false;
+		}
+		else {
+			return false;
+		}
+}
+bool scanCol(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
+	int counter{ 0 };
+	if (kingPos.y == pos.y) {
+		if (kingPos.x > pos.x) {
+			pos.x += 1;
+			for (pos.x; pos.x < kingPos.x; ++pos.x) {
+				if (array[pos.x][pos.y]) {
+					if (array[pos.x][pos.y]->getFlag() == flag) {
+						return false;
+					}
+					else {
+						++counter;
+					}
+				}
+			}
+		}
+		if (kingPos.x < pos.x) {
+			pos.x -= 1;
+			for (pos.x; pos.x > kingPos.x; --pos.x) {
+				if (array[pos.x][pos.y]) {
+					if (array[pos.x][pos.y]->getFlag() == flag) {
+						return false;
+					}
+					else {
+						++counter;
+					}
+				}
+			}
+		}
+		if (counter == 0) return true;
+		if (counter == 1) {
+			//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
+			return false;
+		}
+		if (counter > 1) return false;
+	}
+	else {
+		return false;
+	}
+}
+bool scanLeftDiag(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
+	int counter{ 0 };
+	if (isOnLeftDiag(pos, kingPos)) {
+		if (pos.x > kingPos.x) {
+			pos.x - 1;
+			pos.y - 1;
+			while (pos.x > kingPos.x) {
+				if (array[pos.x][pos.y]) {
+					if (array[pos.x][pos.y]->getFlag() == flag) {
+						return false;
+					}
+					else {
+						++counter;
+					}
+				}
+				--pos.x;
+				--pos.y;
+			}
+		}
+		if (pos.x < kingPos.x) {
+			pos.x + 1;
+			pos.y + 1;
+			while (pos.x < kingPos.x) {
+				if (array[pos.x][pos.y]) {
+					if (array[pos.x][pos.y]->getFlag() == flag) {
+						return false;
+					}
+					else {
+						++counter;
+					}
+				}
+				++pos.x;
+				++pos.y;
+			}
+		}
+		if (counter == 0) return true;
+		if (counter == 1) {
+			//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
+			return false;
+		}
+		if (counter > 1) return false;
+	}
+	else {
+		return false;
+	}
+}
+bool scanRightDiag(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
+	int counter{ 0 };
+	if (isOnRightDiag(pos, kingPos)) {
+		if (pos.x > kingPos.x) {
+			pos.x - 1;
+			pos.y + 1;
+			while (pos.x > kingPos.x) {
+				if (array[pos.x][pos.y]) {
+					if (array[pos.x][pos.y]->getFlag() == flag) {
+						return false;
+					}
+					else {
+						++counter;
+					}
+				}
+				--pos.x;
+				++pos.y;
+			}
+		}
+		if (pos.x < kingPos.x) {
+			pos.x + 1;
+			pos.y - 1;
+			while (pos.x < kingPos.x) {
+				if (array[pos.x][pos.y]) {
+					if (array[pos.x][pos.y]->getFlag() == flag) {
+						return false;
+					}
+					else {
+						++counter;
+					}
+				}
+				++pos.x;
+				--pos.y;
+			}
+		}
+		if (counter == 0) return true;
+		if (counter == 1) {
+			//must notify piecemanager of the piece to be locked, piecemanager then tells rulemanager to actually trigger the lock
+			return false;
+		}
+		if (counter > 1) return false;
+	}
+	else {
+		return false;
 	}
 }
 void invalidPieceMessage() {

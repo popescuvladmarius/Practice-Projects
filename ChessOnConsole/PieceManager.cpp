@@ -113,7 +113,8 @@ void PieceManager::initializeArray() {
 		}
 	}
 }
-PieceManager::PieceManager() :
+PieceManager::PieceManager(RuleManager& ref) :
+	    rule_ref {ref},
 		whites(*this),
 		blacks(*this)
 	{
@@ -136,4 +137,22 @@ PieceManager::PieceManager() :
 	void PieceManager::updateArray(const Move& move) {
 		masterArray[move.move.x][move.move.y] = move.piece;
 		masterArray[move.oldPos.x][move.oldPos.y] = nullptr;
+	}
+	void PieceManager::notify_whiteKingMoved() const {
+		rule_ref.whiteKingMoved();
+	}
+	void PieceManager::notify_whiteLeftRookMoved() const {
+		rule_ref.whiteLeftRookMoved();
+	}
+	void PieceManager::notify_whiteRightRookMoved() const {
+		rule_ref.whiteRightRookMoved();
+	}
+	void PieceManager::notify_blackKingMoved() const {
+		rule_ref.blackKingMoved();
+	}
+	void PieceManager::notify_blackLeftRookMoved() const {
+		rule_ref.blackLeftRookMoved();
+	}
+	void PieceManager::notify_blackRightRookMoved() const {
+		rule_ref.blackRightRookMoved();
 	}
