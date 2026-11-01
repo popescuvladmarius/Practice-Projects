@@ -42,8 +42,8 @@ private:
 	void initializeArray();
 public:
 	PieceManager(RuleManager& ref);
-	std::vector<Piece*> getWhiteVector();
-	std::vector<Piece*> getBlackVector();
+	std::vector<Piece*>& getWhiteVector();
+	std::vector<Piece*>& getBlackVector();
 	const King& view_whiteKing() const;
 	const King& view_blackKing() const;
 	const Queen& view_whiteQueen() const;
@@ -62,4 +62,8 @@ public:
 	void notify_blackKingMoved() const;
 	void notify_blackLeftRookMoved() const;
 	void notify_blackRightRookMoved() const;
+	bool queryKingsideCastling() const;
+	bool queryQueensideCastling() const;
+	void triggerGlobalScan();
+	void triggerTeamScan(Turn turn);
 };

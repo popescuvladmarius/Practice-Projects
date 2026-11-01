@@ -63,3 +63,61 @@ bool RuleManager::queensideAreEmpty() {
 		break;
 	}
 }
+bool RuleManager::kingsideCastlingIsValid() {
+	switch (state_ref.getTurn()) {
+	case Turn::white:
+		if (isWhiteKingsideCastlingPossible) {
+			if (kingsideAreEmpty()) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		return false;
+		break;
+	case Turn::black:
+		if (isBlackKingsideCastlingPossible) {
+			if (kingsideAreEmpty()) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		return false;
+		break;
+	}
+}
+bool RuleManager::queensideCastingIsValid() {
+	switch (state_ref.getTurn()) {
+	case Turn::white:
+		if (isWhiteQueensideCastlingPossible) {
+			if (queensideAreEmpty()) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		return false;
+		break;
+	case Turn::black:
+		if (isBlackQueensideCastlingPossible) {
+			if (queensideAreEmpty()) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		return false;
+		break;
+	}
+}
+void RuleManager::checkSignaled(Piece* piece) {
+	checkingPieces.push_back(piece);
+	if (!check) {
+		check = true;
+	}
+}

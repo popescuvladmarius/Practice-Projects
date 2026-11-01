@@ -153,7 +153,7 @@ bool isMoveValidOnRightDiag(Pos pos, Pos endPos, const std::array<std::array<Pie
 		return true;
 	}
 }
-bool scanRow(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
+bool checkScanRow(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
 	int counter{ 0 };
 		if (kingPos.x == pos.x) {
 			if (kingPos.y > pos.y) {
@@ -193,7 +193,7 @@ bool scanRow(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& a
 			return false;
 		}
 }
-bool scanCol(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
+bool checkScanCol(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
 	int counter{ 0 };
 	if (kingPos.y == pos.y) {
 		if (kingPos.x > pos.x) {
@@ -233,7 +233,7 @@ bool scanCol(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& a
 		return false;
 	}
 }
-bool scanLeftDiag(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
+bool checkScanLeftDiag(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
 	int counter{ 0 };
 	if (isOnLeftDiag(pos, kingPos)) {
 		if (pos.x > kingPos.x) {
@@ -279,7 +279,7 @@ bool scanLeftDiag(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 
 		return false;
 	}
 }
-bool scanRightDiag(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
+bool checkScanRightDiag(Pos pos, Pos kingPos, const std::array<std::array<Piece*, 8>, 8>& array, Flag flag) {
 	int counter{ 0 };
 	if (isOnRightDiag(pos, kingPos)) {
 		if (pos.x > kingPos.x) {

@@ -123,8 +123,8 @@ PieceManager::PieceManager(RuleManager& ref) :
 		initializeBlacks();
 		initializeArray();
 	}
-	std::vector<Piece*> PieceManager::getWhiteVector() { return whitePieces; }
-	std::vector<Piece*> PieceManager::getBlackVector() { return blackPieces; }
+	std::vector<Piece*>& PieceManager::getWhiteVector() { return whitePieces; }
+	std::vector<Piece*>& PieceManager::getBlackVector() { return blackPieces; }
 	const King& PieceManager::view_whiteKing() const { return whites.getKing(); }
 	const King& PieceManager::view_blackKing() const { return blacks.getKing(); }
 	const Queen& PieceManager::view_whiteQueen() const { return whites.getQueen(); }
@@ -135,6 +135,16 @@ PieceManager::PieceManager(RuleManager& ref) :
 	const Rook& PieceManager::view_blackRook_right() const { return blacks.getRook(1); }
 	const std::array<std::array<Piece*, 8>, 8>& PieceManager::getMasterArray() const { return masterArray; }
 	void PieceManager::updateArray(const Move& move) {
+		if (move.capture) {
+			switch (move.piece->getFlag()) {
+			case Flag::white:
+				std::erase(blackPieces, masterArray[move.move.x][move.move.y]);
+				break;
+			case Flag::black:
+				std::erase(whitePieces, masterArray[move.move.x][move.move.y]);
+				break;
+			}
+		}
 		masterArray[move.move.x][move.move.y] = move.piece;
 		masterArray[move.oldPos.x][move.oldPos.y] = nullptr;
 	}
@@ -155,4 +165,40 @@ PieceManager::PieceManager(RuleManager& ref) :
 	}
 	void PieceManager::notify_blackRightRookMoved() const {
 		rule_ref.blackRightRookMoved();
+	}
+	bool PieceManager::queryKingsideCastling() const {
+		if (rule_ref.kingsideCastlingIsValid()) return true; else return false;
+	}
+	bool PieceManager::queryQueensideCastling() const {
+		if (rule_ref.queensideCastingIsValid()) return true; else return false;
+	}
+	void PieceManager::triggerGlobalScan() {
+		for (auto piece : whitePieces) {
+			if (piece->checkScanner()) {
+				rule_ref.checkSignaled(piece);
+			}
+		}
+		for (auto piece : blackPieces) {
+			if (piece->checkScanner()) {
+				rule_ref.checkSignaled(piece);
+			}
+		}
+	}
+	void PieceManager::triggerTeamScan(Turn turn) {
+		switch (turn) {
+		case Turn::white:
+			for (auto piece : whitePieces) {
+				if (piece->checkScanner()) {
+					rule_ref.checkSignaled(piece);
+				}
+			}
+			break;
+		case Turn::black:
+			for (auto piece : blackPieces) {
+				if (piece->checkScanner()) {
+					rule_ref.checkSignaled(piece);
+				}
+			}
+			break;
+		}
 	}

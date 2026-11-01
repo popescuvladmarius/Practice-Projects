@@ -148,54 +148,6 @@ bool Pawn::checkScanner() {
 		break;
 	}
 }
-bool Pawn::kingsideScanner() {
-	switch (flag) {
-	case Flag::white:
-		std::array<Pos, 2> blackSquares{ {
-		{0, 5},
-		{0, 6}
-} };
-		if (captureRight() == blackSquares[0] || captureRight() == blackSquares[1]) {
-			return true;
-		}
-		if (captureLeft() == blackSquares[0] || captureLeft() == blackSquares[1]) {
-			return true;
-		}
-		return false;
-		break;
-	case Flag::black:
-		std::array<Pos, 2> whiteSquares{ {
-		{7, 5},
-		{7, 6}
-} };
-		if (captureRight() == whiteSquares[0] || captureRight() == whiteSquares[1]) {
-			return true;
-		}
-		if (captureLeft() == whiteSquares[0] || captureLeft() == whiteSquares[1]) {
-			return true;
-		}
-		return false;
-		break;
-	}
-}
-bool Pawn::queensideScanner() {
-	switch (flag) {
-	case Flag::white:
-		std::array<Pos, 2> blackSquares{ {
-			{0, 2},
-			{0, 3}
-} };
-
-		break;
-	case Flag::black:
-		std::array<Pos, 2> whitequares{ {
-			{7, 2},
-			{7, 3}
-} };
-
-		break;
-	}
-}
 
 Knight::Knight(const PieceManager& ref) : Piece{ ref } {}
 inline Pos Knight::getUpRightJump() {
@@ -419,138 +371,6 @@ bool Knight::checkScanner() {
 		break;
 	}
 }
-bool Knight::kingsideScanner() {
-	switch (flag) {
-	case Flag::white:
-		std::array<Pos, 2> blackSquares{ {
-		{0, 5},
-		{0, 6}
-} };
-		if (getUpRightJump() == blackSquares[0] || getUpRightJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getUpLeftJump() == blackSquares[0] || getUpLeftJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getDownRightJump() == blackSquares[0] || getDownRightJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getDownLeftJump() == blackSquares[0] || getDownLeftJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getRightUpJump() == blackSquares[0] || getRightUpJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getRightDownJump() == blackSquares[0] || getRightDownJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getLeftUpJump() == blackSquares[0] || getLeftUpJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getLeftDownJump() == blackSquares[0] || getLeftDownJump() == blackSquares[1]) {
-			return true;
-		}
-		return false;
-		break;
-	case Flag::black:
-		std::array<Pos, 2> whiteSquares{ {
-		{7, 5},
-		{7, 6}
-	} };
-		if (getUpRightJump() == whiteSquares[0] || getUpRightJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getUpLeftJump() == whiteSquares[0] || getUpLeftJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getDownRightJump() == whiteSquares[0] || getDownRightJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getDownLeftJump() == whiteSquares[0] || getDownLeftJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getRightUpJump() == whiteSquares[0] || getRightUpJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getRightDownJump() == whiteSquares[0] || getRightDownJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getLeftUpJump() == whiteSquares[0] || getLeftUpJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getLeftDownJump() == whiteSquares[0] || getLeftDownJump() == whiteSquares[1]) {
-			return true;
-		}
-		return false;
-		break;
-	}
-}
-bool Knight::queensideScanner() {
-	switch (flag) {
-	case Flag::white:
-		std::array<Pos, 2> blackSquares{ {
-			{0, 2},
-			{0, 3}
-} };
-		if (getUpRightJump() == blackSquares[0] || getUpRightJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getUpLeftJump() == blackSquares[0] || getUpLeftJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getDownRightJump() == blackSquares[0] || getDownRightJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getDownLeftJump() == blackSquares[0] || getDownLeftJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getRightUpJump() == blackSquares[0] || getRightUpJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getRightDownJump() == blackSquares[0] || getRightDownJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getLeftUpJump() == blackSquares[0] || getLeftUpJump() == blackSquares[1]) {
-			return true;
-		}
-		if (getLeftDownJump() == blackSquares[0] || getLeftDownJump() == blackSquares[1]) {
-			return true;
-		}
-		return false;
-		break;
-	case Flag::black:
-		std::array<Pos, 2> whiteSquares{ {
-			{7, 2},
-			{7, 3}
-} };
-		if (getUpRightJump() == whiteSquares[0] || getUpRightJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getUpLeftJump() == whiteSquares[0] || getUpLeftJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getDownRightJump() == whiteSquares[0] || getDownRightJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getDownLeftJump() == whiteSquares[0] || getDownLeftJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getRightUpJump() == whiteSquares[0] || getRightUpJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getRightDownJump() == whiteSquares[0] || getRightDownJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getLeftUpJump() == whiteSquares[0] || getLeftUpJump() == whiteSquares[1]) {
-			return true;
-		}
-		if (getLeftDownJump() == whiteSquares[0] || getLeftDownJump() == whiteSquares[1]) {
-			return true;
-		}
-		return false;
-		break;
-	}
-}
 
 Rook::Rook(const PieceManager& ref) : Piece{ ref } {}
 bool Rook::isValid() {
@@ -581,7 +401,7 @@ bool Rook::isValid() {
 bool Rook::checkScanner() {
 	switch (flag) {
 	case Flag::white:
-		if (scanRow(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) || scanCol(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag)) {
+		if (checkScanRow(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) || checkScanCol(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag)) {
 			return true;
 		}
 		else {
@@ -589,7 +409,7 @@ bool Rook::checkScanner() {
 		}
 		break;
 	case Flag::black:
-		if (scanRow(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) || scanCol(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag)) {
+		if (checkScanRow(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) || checkScanCol(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag)) {
 			return true;
 		}
 		else {
@@ -628,7 +448,7 @@ bool Bishop::isValid() {
 bool Bishop::checkScanner() {
 	switch (flag) {
 	case Flag::white:
-		if (scanLeftDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) || scanRightDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag)) {
+		if (checkScanLeftDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) || checkScanRightDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag)) {
 			return true;
 		}
 		else {
@@ -636,7 +456,7 @@ bool Bishop::checkScanner() {
 		}
 		break;
 	case Flag::black:
-		if (scanLeftDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) || scanRightDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag)) {
+		if (checkScanLeftDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) || checkScanRightDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag)) {
 			return true;
 		}
 		else {
@@ -689,6 +509,16 @@ inline Pos King::down_left() {
 	Pos temp{ pos };
 	temp.x -= dir();
 	--temp.y;
+	return temp;
+}
+inline Pos King::kingsideCastling() {
+	Pos temp{ pos };
+	temp.y += 2;
+	return temp;
+}
+inline Pos King::queensideCastling() {
+	Pos temp{ pos };
+	temp.y -= 2;
 	return temp;
 }
 bool King::isValid() {
@@ -804,6 +634,12 @@ bool King::isValid() {
 			return true;
 		}
 	}
+	if (endPos == kingsideCastling()) {                  //must be revised accoridng to the updated isValid logic
+		if (piece_ref.queryKingsideCastling()) return true; else return false;              
+	}
+	if (endPos == queensideCastling()) {
+		if (piece_ref.queryQueensideCastling()) return true; else return false;
+	}
 	return false;
 }
 bool King::checkScanner() {  
@@ -916,10 +752,10 @@ bool Queen::isValid() {
 bool Queen::checkScanner() {
 	switch (flag) {
 	case Flag::white:
-		if (scanRow(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) ||
-			scanCol(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) ||
-			scanLeftDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) ||
-			scanRightDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag)) {
+		if (checkScanRow(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			checkScanCol(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			checkScanLeftDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			checkScanRightDiag(pos, piece_ref.view_blackKing().getPos(), piece_ref.getMasterArray(), flag)) {
 			return true;
 		}
 		else {
@@ -927,10 +763,10 @@ bool Queen::checkScanner() {
 		}
 		break;
 	case Flag::black:
-		if (scanRow(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) ||
-			scanCol(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) ||
-			scanLeftDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) ||
-			scanRightDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag)) {
+		if (checkScanRow(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			checkScanCol(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			checkScanLeftDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag) ||
+			checkScanRightDiag(pos, piece_ref.view_whiteKing().getPos(), piece_ref.getMasterArray(), flag)) {
 			return true;
 		}
 		else {
