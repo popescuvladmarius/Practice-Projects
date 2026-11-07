@@ -39,7 +39,6 @@ void Piece::move() {
 		}
 	}
 }
-
 int Piece::dir() {
 	if (this->getFlag() == Flag::white) {
 		return -1;
@@ -54,6 +53,10 @@ void Piece::didCapture() { capture = true; }
 bool Piece::checkCapture() const { return capture; }
 void Piece::resetCapture() { capture = false; }
 void Piece::hasMovedOnce() { moved = true; }
+void Piece::undoMove() {
+	pos = oldPos;
+	resetCapture();
+}
 
 Pawn::Pawn(const PieceManager& ref) : Piece{ ref } {}
 inline Pos Pawn::forward() {
@@ -521,6 +524,18 @@ inline Pos King::queensideCastling() {
 	temp.y -= 2;
 	return temp;
 }
+void King::kingsideCastlingSelected() {
+	castlingMoveSelected = CastlingMove::kingsideCastling;
+}
+void King::queensideCastlingSelected() {
+	castlingMoveSelected = CastlingMove::queensideCastling;
+}
+CastlingMove King::getCastlingMove() {
+	return castlingMoveSelected;
+}
+void King::setCheck() { check = true; }
+void King::resetCheck() { check = false; }
+bool King::getCheckState() { return check; }
 bool King::isValid() {
 	if (endPos == forward()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
@@ -635,10 +650,22 @@ bool King::isValid() {
 		}
 	}
 	if (endPos == kingsideCastling()) {                  //must be revised accoridng to the updated isValid logic
-		if (piece_ref.queryKingsideCastling()) return true; else return false;              
+		if (piece_ref.queryKingsideCastling()) {
+			kingsideCastlingSelected();
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	if (endPos == queensideCastling()) {
-		if (piece_ref.queryQueensideCastling()) return true; else return false;
+		if (piece_ref.queryQueensideCastling()) {
+			queensideCastlingSelected();
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	return false;
 }

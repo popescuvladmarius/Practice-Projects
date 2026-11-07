@@ -172,15 +172,27 @@ PieceManager::PieceManager(RuleManager& ref) :
 	bool PieceManager::queryQueensideCastling() const {
 		if (rule_ref.queensideCastingIsValid()) return true; else return false;
 	}
+	void PieceManager::signalCheck(Piece* checkingPiece) {
+		switch (checkingPiece->getFlag()) {
+		case Flag::white:
+			dynamic_cast<King*>(getMasterArray()[view_blackKing().getPos().x][view_blackKing().getPos().y])->setCheck();
+			rule_ref.addToWhiteCheckingPieceArray(checkingPiece);
+			break;
+		case Flag::black:
+			dynamic_cast<King*>(getMasterArray()[view_whiteKing().getPos().x][view_whiteKing().getPos().y])->setCheck();
+			rule_ref.addToBlackCheckingPieceArray(checkingPiece);
+			break;
+		}
+	}
 	void PieceManager::triggerGlobalScan() {
 		for (auto piece : whitePieces) {
 			if (piece->checkScanner()) {
-				rule_ref.checkSignaled(piece);
+				signalCheck(piece);
 			}
 		}
 		for (auto piece : blackPieces) {
 			if (piece->checkScanner()) {
-				rule_ref.checkSignaled(piece);
+				signalCheck(piece);
 			}
 		}
 	}
@@ -189,14 +201,14 @@ PieceManager::PieceManager(RuleManager& ref) :
 		case Turn::white:
 			for (auto piece : whitePieces) {
 				if (piece->checkScanner()) {
-					rule_ref.checkSignaled(piece);
+					signalCheck(piece);
 				}
 			}
 			break;
 		case Turn::black:
 			for (auto piece : blackPieces) {
 				if (piece->checkScanner()) {
-					rule_ref.checkSignaled(piece);
+					signalCheck(piece);
 				}
 			}
 			break;

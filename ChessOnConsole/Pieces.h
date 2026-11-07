@@ -23,6 +23,7 @@ public:
 	void setFlag(Flag input);
 	Flag getFlag() const;
 	void move();
+	void undoMove();
 	int dir();
 	void setGraphics(char value);
 	char getGraphics() const;
@@ -78,6 +79,9 @@ public:
 };
 
 class King : public Piece {
+private:
+	CastlingMove castlingMoveSelected{ CastlingMove::other };
+	bool check{ false };
 public:
 	King(const PieceManager& ref);
 	inline Pos forward();
@@ -90,6 +94,12 @@ public:
 	inline Pos down_left();
 	inline Pos kingsideCastling();
 	inline Pos queensideCastling();
+	void kingsideCastlingSelected();
+	void queensideCastlingSelected();
+	CastlingMove getCastlingMove();
+	void setCheck();
+	void resetCheck();
+	bool getCheckState();
 	bool isValid() override;
 	bool checkScanner() override;
 };

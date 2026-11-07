@@ -64,6 +64,7 @@ public:
 	void notify_blackRightRookMoved() const;
 	bool queryKingsideCastling() const;
 	bool queryQueensideCastling() const;
+	void signalCheck(Piece* checkingPiece);
 	void triggerGlobalScan();
 	void triggerTeamScan(Turn turn);
 };

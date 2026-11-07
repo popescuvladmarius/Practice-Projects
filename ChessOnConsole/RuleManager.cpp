@@ -115,9 +115,28 @@ bool RuleManager::queensideCastingIsValid() {
 		break;
 	}
 }
-void RuleManager::checkSignaled(Piece* piece) {
-	checkingPieces.push_back(piece);
-	if (!check) {
-		check = true;
+void RuleManager::addToWhiteCheckingPieceArray(Piece* piece) {
+	whiteCheckingPieces.push_back(piece);
+}
+void RuleManager::addToBlackCheckingPieceArray(Piece* piece) {
+	blackCheckingPieces.push_back(piece);
+}
+bool RuleManager::whiteCheckState() { 
+	checkStatus = CheckStatus::whiteChecked;
+	return whiteCheck; 
+}
+bool RuleManager::blackCheckState() { 
+	checkStatus = CheckStatus::blackChecked;
+	return blackCheck; 
+}
+CheckStatus RuleManager::getCheckStatus() {
+	return checkStatus;
+}
+void RuleManager::handleCheck() {
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[piece_ref.view_blackKing().getPos().x][piece_ref.view_blackKing().getPos().y])->getCheckState()) {
+
+	}
+	if (dynamic_cast<King*>(piece_ref.getMasterArray()[piece_ref.view_blackKing().getPos().x][piece_ref.view_blackKing().getPos().y])->getCheckState()) {
+
 	}
 }

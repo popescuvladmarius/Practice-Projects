@@ -30,6 +30,19 @@ enum class Status {
 	invalidMove
 };
 
+enum class CheckStatus {
+	noneChecked,
+	whiteChecked,
+	blackChecked,
+	bothChecked
+};
+
+enum class CastlingMove {
+	other,
+	kingsideCastling,
+	queensideCastling
+};
+
 struct Move {
 	Pos move;
 	Pos oldPos;

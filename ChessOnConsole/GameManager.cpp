@@ -42,10 +42,41 @@ void GameManager::selectMove() {
 		if (gamestate.getStatus() == Status::invalidMove) {
 			invalidMoveMessage();
 		}
+		if (dynamic_cast<King*>(gamestate.getSelectedPiece())) {
+			auto selectedKing{ dynamic_cast<King*>(gamestate.getSelectedPiece()) };
+				controller.select();
+				selectedKing->setEndPos(controller.getInputPos());
+				if (selectedKing->isValid()) {
+					if (selectedKing->getCastlingMove() == CastlingMove::kingsideCastling) {
+
+					}
+					if (selectedKing->getCastlingMove() == CastlingMove::queensideCastling) {
+
+					}
+					selectedKing->move();
+					piecemanager.triggerGlobalScan();
+					if (selectedKing->getCheckState()) {
+						selectedKing->undoMove();
+						selectedKing->resetCheck();
+						gamestate.setStatus(Status::invalidMove);
+					}
+					else {
+						gamestate.addMove(gamestate.getSelectedPiece());
+						piecemanager.updateArray(gamestate.readMove());
+						selectedKing->resetCapture();
+						gamestate.setStatus(Status::validMove);
+					}
+				}
+				else {
+					gamestate.setStatus(Status::invalidMove);
+				}
+		}
+		else {
 			controller.select();
 			gamestate.getSelectedPiece()->setEndPos(controller.getInputPos());
 			if (gamestate.getSelectedPiece()->isValid()) {
 				gamestate.getSelectedPiece()->move();
+				piecemanager.triggerTeamScan(gamestate.getTurn());
 				gamestate.addMove(gamestate.getSelectedPiece());
 				piecemanager.updateArray(gamestate.readMove());
 				gamestate.getSelectedPiece()->resetCapture();
@@ -55,6 +86,7 @@ void GameManager::selectMove() {
 				gamestate.setStatus(Status::invalidMove);
 			}
 		}
+	}
 }
 void GameManager::nextTurn() {
 	if (gamestate.getTurn() == Turn::white) {

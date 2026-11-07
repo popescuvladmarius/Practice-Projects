@@ -3,17 +3,23 @@
 
 class PieceManager;
 class Gamestate;
+class Piece;
+enum class CheckStatus;
 
 class RuleManager {
 private:
 	const PieceManager& piece_ref;
 	const Gamestate& state_ref;
-	bool check{ false };
+	CheckStatus checkStatus{ CheckStatus::noneChecked };
+	bool whiteCheck{ false };
+	bool blackCheck{ false };
+	bool checkmate{ false };
 	bool isWhiteKingsideCastlingPossible{ true };
 	bool isWhiteQueensideCastlingPossible{ true };
 	bool isBlackKingsideCastlingPossible{ true };
 	bool isBlackQueensideCastlingPossible{ true };
-	std::vector<Piece*> checkingPieces;
+	std::vector<Piece*> whiteCheckingPieces;
+	std::vector<Piece*> blackCheckingPieces;
 public:
 	RuleManager(const PieceManager& piece, const Gamestate& state);
 	void whiteKingMoved();
@@ -26,5 +32,10 @@ public:
 	bool queensideAreEmpty();
 	bool kingsideCastlingIsValid();
 	bool queensideCastingIsValid();
-	void checkSignaled(Piece* piece);
+	void addToWhiteCheckingPieceArray(Piece* piece);
+	void addToBlackCheckingPieceArray(Piece* piece);
+	bool whiteCheckState();
+	bool blackCheckState();
+	CheckStatus getCheckStatus();
+	void handleCheck();
 };
