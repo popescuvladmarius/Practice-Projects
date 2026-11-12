@@ -7,7 +7,7 @@ class Piece {
 protected:
 	Pos pos{};
 	Pos endPos{};
-	Pos oldPos{};
+	Pos oldPos{ pos };
 	Flag flag{};
 	bool capture{ false };
 	bool moved{ false };
@@ -94,8 +94,9 @@ public:
 	inline Pos down_left();
 	inline Pos kingsideCastling();
 	inline Pos queensideCastling();
-	void kingsideCastlingSelected();
-	void queensideCastlingSelected();
+	inline Pos kingsideStepping();
+	inline Pos queensideStepping();
+	void resetCastlingMove();
 	CastlingMove getCastlingMove();
 	void setCheck();
 	void resetCheck();

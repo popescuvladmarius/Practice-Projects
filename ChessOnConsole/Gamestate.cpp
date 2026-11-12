@@ -8,6 +8,6 @@ void Gamestate::setState(bool input) { state = input; }
 bool Gamestate::getState() const { return state; }
 void Gamestate::setStatus(Status input) { status = input; }
 Status Gamestate::getStatus() const { return status; }
-void Gamestate::addMove(const Piece* const piece) { moveCollection.emplace_back(piece->getPos(), piece->getOldPos(), piece, piece->checkCapture()); }
+void Gamestate::addMove(const Piece* const piece, MoveType move = MoveType::regular) { moveCollection.emplace_back(piece->getPos(), piece->getOldPos(), piece, piece->checkCapture(), move); }
 const Move& Gamestate::readMove() { moveCollection.back(); }
 const std::vector<Move>& Gamestate::getMoveCollection() { return moveCollection; }

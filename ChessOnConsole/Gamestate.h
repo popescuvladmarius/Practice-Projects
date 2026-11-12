@@ -17,7 +17,7 @@ public:
 	bool getState() const;
 	void setStatus(Status input);
 	Status getStatus() const;
-	void addMove(const Piece* const piece);
+	void addMove(const Piece* const piece, MoveType move = MoveType::regular);
 	const Move& readMove();
 	const std::vector<Move>& getMoveCollection();
 };

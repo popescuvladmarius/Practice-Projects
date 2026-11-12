@@ -43,10 +43,18 @@ enum class CastlingMove {
 	queensideCastling
 };
 
+enum class MoveType {
+	regular,
+	kingsideCastling,
+	queensideCastling,
+	enpassant
+};
+
 struct Move {
 	Pos move;
 	Pos oldPos;
 	Piece* piece;
 	bool capture;
+	MoveType moveType{ MoveType::regular };
 };
 

@@ -47,24 +47,67 @@ void GameManager::selectMove() {
 				controller.select();
 				selectedKing->setEndPos(controller.getInputPos());
 				if (selectedKing->isValid()) {
-					if (selectedKing->getCastlingMove() == CastlingMove::kingsideCastling) {
-
-					}
-					if (selectedKing->getCastlingMove() == CastlingMove::queensideCastling) {
-
-					}
-					selectedKing->move();
-					piecemanager.triggerGlobalScan();
-					if (selectedKing->getCheckState()) {
-						selectedKing->undoMove();
-						selectedKing->resetCheck();
-						gamestate.setStatus(Status::invalidMove);
-					}
-					else {
-						gamestate.addMove(gamestate.getSelectedPiece());
-						piecemanager.updateArray(gamestate.readMove());
-						selectedKing->resetCapture();
-						gamestate.setStatus(Status::validMove);
+					switch (selectedKing->getCastlingMove()) {
+					int validMovesCounter{ 0 };
+					case CastlingMove::kingsideCastling:
+						for (std::size_t i = 0; i < 2; ++i) {
+							selectedKing->kingsideStepping();
+							piecemanager.triggerGlobalScan();
+							if (selectedKing->getCheckState()) {
+								selectedKing->undoMove();
+								selectedKing->resetCheck();
+								gamestate.setStatus(Status::invalidMove);
+								break;
+							}
+							else {
+								++validMovesCounter;
+							}
+						}
+						if (validMovesCounter == 2) {
+							gamestate.addMove(gamestate.getSelectedPiece(), MoveType::kingsideCastling);
+							piecemanager.updateArray(gamestate.readMove());
+							selectedKing->resetCapture();
+							selectedKing->resetCastlingMove();
+							gamestate.setStatus(Status::validMove);
+						}
+						break;
+					case CastlingMove::queensideCastling:
+						for (std::size_t i = 0; i < 2; ++i) {
+							selectedKing->queensideStepping();
+							piecemanager.triggerGlobalScan();
+							if (selectedKing->getCheckState()) {
+								selectedKing->undoMove();
+								selectedKing->resetCheck();
+								gamestate.setStatus(Status::invalidMove);
+								break;
+							}
+							else {
+								++validMovesCounter;
+							}
+						}
+						if (validMovesCounter == 2) {
+							gamestate.addMove(gamestate.getSelectedPiece(), MoveType::queensideCastling);
+							piecemanager.updateArray(gamestate.readMove());
+							selectedKing->resetCapture();
+							selectedKing->resetCastlingMove();
+							gamestate.setStatus(Status::validMove);
+						}
+						break;
+					case CastlingMove::other:
+						selectedKing->move();
+						piecemanager.triggerGlobalScan();
+						if (selectedKing->getCheckState()) {
+							selectedKing->undoMove();
+							selectedKing->resetCheck();
+							gamestate.setStatus(Status::invalidMove);
+						}
+						else {
+							gamestate.addMove(gamestate.getSelectedPiece());
+							piecemanager.updateArray(gamestate.readMove());
+							selectedKing->resetCapture();
+							gamestate.setStatus(Status::validMove);
+						}
+						break;
 					}
 				}
 				else {

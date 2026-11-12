@@ -6,6 +6,7 @@
 
 class Pos;
 class Piece;
+
 class PieceManager {
 private:
 	std::unordered_map<std::string, Pos> pieceInitialPositions{

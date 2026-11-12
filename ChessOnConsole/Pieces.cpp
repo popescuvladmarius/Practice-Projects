@@ -524,11 +524,14 @@ inline Pos King::queensideCastling() {
 	temp.y -= 2;
 	return temp;
 }
-void King::kingsideCastlingSelected() {
-	castlingMoveSelected = CastlingMove::kingsideCastling;
+inline Pos King::kingsideStepping() {
+	pos.y += 1;
 }
-void King::queensideCastlingSelected() {
-	castlingMoveSelected = CastlingMove::queensideCastling;
+inline Pos King::queensideStepping() {
+	pos.y -= 1;
+}
+void King::resetCastlingMove() {
+	castlingMoveSelected = CastlingMove::other;
 }
 CastlingMove King::getCastlingMove() {
 	return castlingMoveSelected;
@@ -651,7 +654,7 @@ bool King::isValid() {
 	}
 	if (endPos == kingsideCastling()) {                  //must be revised accoridng to the updated isValid logic
 		if (piece_ref.queryKingsideCastling()) {
-			kingsideCastlingSelected();
+			castlingMoveSelected = CastlingMove::kingsideCastling;
 			return true;
 		}
 		else {
@@ -660,7 +663,7 @@ bool King::isValid() {
 	}
 	if (endPos == queensideCastling()) {
 		if (piece_ref.queryQueensideCastling()) {
-			queensideCastlingSelected();
+			castlingMoveSelected = CastlingMove::queensideCastling;
 			return true;
 		}
 		else {
