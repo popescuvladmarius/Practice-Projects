@@ -17,6 +17,8 @@ public:
 	bool isStateValid();
 	void selectPiece();
 	void selectMove();
+	const King* getCheckedKing();
+	void handleCheck();
 	void nextTurn();
 	void run();
 };

@@ -214,3 +214,13 @@ PieceManager::PieceManager(RuleManager& ref) :
 			break;
 		}
 	}
+	King* PieceManager::getOtherKing(King* selectedKing) {
+		switch (selectedKing->getFlag()) {
+		case Flag::white:
+			return dynamic_cast<King*>(getMasterArray()[view_blackKing().getPos().x][view_blackKing().getPos().y]);
+			break;
+		case Flag::black:
+			return dynamic_cast<King*>(getMasterArray()[view_whiteKing().getPos().x][view_whiteKing().getPos().y]);
+			break;
+		}
+	}

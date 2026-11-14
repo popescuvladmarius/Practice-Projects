@@ -132,11 +132,3 @@ bool RuleManager::blackCheckState() {
 CheckStatus RuleManager::getCheckStatus() {
 	return checkStatus;
 }
-void RuleManager::handleCheck() {
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[piece_ref.view_blackKing().getPos().x][piece_ref.view_blackKing().getPos().y])->getCheckState()) {
-
-	}
-	if (dynamic_cast<King*>(piece_ref.getMasterArray()[piece_ref.view_blackKing().getPos().x][piece_ref.view_blackKing().getPos().y])->getCheckState()) {
-
-	}
-}

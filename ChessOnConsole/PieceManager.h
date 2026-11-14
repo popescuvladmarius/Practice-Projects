@@ -68,4 +68,6 @@ public:
 	void signalCheck(Piece* checkingPiece);
 	void triggerGlobalScan();
 	void triggerTeamScan(Turn turn);
+	King* getOtherKing(King* selectedKing);
+	
 };

@@ -538,7 +538,7 @@ CastlingMove King::getCastlingMove() {
 }
 void King::setCheck() { check = true; }
 void King::resetCheck() { check = false; }
-bool King::getCheckState() { return check; }
+bool King::getCheckState() const { return check; }
 bool King::isValid() {
 	if (endPos == forward()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {

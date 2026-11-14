@@ -45,6 +45,7 @@ public:
 	inline Pos forwardDouble();
 	inline Pos captureRight();
 	inline Pos captureLeft();
+	void promotion();
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -100,7 +101,7 @@ public:
 	CastlingMove getCastlingMove();
 	void setCheck();
 	void resetCheck();
-	bool getCheckState();
+	bool getCheckState() const;
 	bool isValid() override;
 	bool checkScanner() override;
 };

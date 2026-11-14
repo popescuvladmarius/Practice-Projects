@@ -37,5 +37,4 @@ public:
 	bool whiteCheckState();
 	bool blackCheckState();
 	CheckStatus getCheckStatus();
-	void handleCheck();
 };

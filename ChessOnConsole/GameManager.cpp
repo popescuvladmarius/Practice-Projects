@@ -56,6 +56,7 @@ void GameManager::selectMove() {
 							if (selectedKing->getCheckState()) {
 								selectedKing->undoMove();
 								selectedKing->resetCheck();
+								piecemanager.getOtherKing(selectedKing)->resetCheck();
 								gamestate.setStatus(Status::invalidMove);
 								break;
 							}
@@ -78,6 +79,7 @@ void GameManager::selectMove() {
 							if (selectedKing->getCheckState()) {
 								selectedKing->undoMove();
 								selectedKing->resetCheck();
+								piecemanager.getOtherKing(selectedKing)->resetCheck();
 								gamestate.setStatus(Status::invalidMove);
 								break;
 							}
@@ -99,6 +101,7 @@ void GameManager::selectMove() {
 						if (selectedKing->getCheckState()) {
 							selectedKing->undoMove();
 							selectedKing->resetCheck();
+							piecemanager.getOtherKing(selectedKing)->resetCheck();
 							gamestate.setStatus(Status::invalidMove);
 						}
 						else {
@@ -131,6 +134,32 @@ void GameManager::selectMove() {
 		}
 	}
 }
+const King* GameManager::getCheckedKing() {
+	switch (gamestate.getTurn()) {
+	case Turn::white:
+		auto checkedKing{ dynamic_cast<King*>(piecemanager.getMasterArray()[piecemanager.view_whiteKing().getPos().x][piecemanager.view_whiteKing().getPos().y]) };
+		if (checkedKing->getCheckState())
+			return checkedKing;
+		else
+			return nullptr;
+		break;
+	case Turn::black:
+		auto checkedKing{ dynamic_cast<King*>(piecemanager.getMasterArray()[piecemanager.view_blackKing().getPos().x][piecemanager.view_blackKing().getPos().y]) };
+		if (checkedKing->getCheckState())
+			return checkedKing;
+		else
+			return nullptr;
+		break;
+	}
+}
+void GameManager::handleCheck() {
+	auto checkedKing{ getCheckedKing() };
+	do{
+	    selectPiece();
+		
+	} while (checkedKing->getCheckState());
+	
+}
 void GameManager::nextTurn() {
 	if (gamestate.getTurn() == Turn::white) {
 		gamestate.setTurn(Turn::black);
@@ -141,10 +170,15 @@ void GameManager::nextTurn() {
 }
 void GameManager::run() {
 	while (isStateValid()) {
-			board.render();
+		board.render();
+		if (getCheckedKing()) {
+			handleCheck();
+		}
+		else {
 			selectPiece();
 			selectMove();
-			board.writeBoard();
-			nextTurn();
+		}
+		board.writeBoard();
+		nextTurn();
 	}
 }
