@@ -81,6 +81,9 @@ inline Pos Pawn::captureLeft() {
 	--temp.y;
 	return temp;
 }
+bool Pawn::iterateVirtualBaseMove() {
+	
+}
 bool Pawn::isValid() {
 	if (forward() == endPos) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {
@@ -652,7 +655,7 @@ bool King::isValid() {
 			return true;
 		}
 	}
-	if (endPos == kingsideCastling()) {                  //must be revised accoridng to the updated isValid logic
+	if (endPos == kingsideCastling()) {                  
 		if (piece_ref.queryKingsideCastling()) {
 			castlingMoveSelected = CastlingMove::kingsideCastling;
 			return true;

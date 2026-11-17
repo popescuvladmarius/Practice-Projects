@@ -30,6 +30,12 @@ enum class Status {
 	invalidMove
 };
 
+enum class LoopStatus {
+	initial,
+	pieceSelected,
+	moveSelected
+};
+
 enum class CheckStatus {
 	noneChecked,
 	whiteChecked,

@@ -1,124 +1,111 @@
 #include "GameManager.h"
 
-bool GameManager::isStateValid() {
-	if (gamestate.getState()) {
-		return true;
-	}
-	return false;
-}
-void GameManager::selectPiece() {
-	while (gamestate.getStatus() != Status::validPiece) {
-		if (gamestate.getStatus() == Status::invalidPiece) {
-			invalidPieceMessage();
-		}
-		controller.select();
+void GameManager::selectPiece(char& counter) {
 		switch (gamestate.getTurn()) {
 		case Turn::white:
 			if (piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y] && piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]->getFlag() == Flag::white) {
 				gamestate.setSelectedPiece(piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]);
-				gamestate.setStatus(Status::validPiece);
-			}
-			else {
-				gamestate.setSelectedPiece(nullptr);
-				gamestate.setStatus(Status::invalidPiece);
+				gamestate.setLoopStatus(LoopStatus::pieceSelected);
+				--counter;
 			}
 			break;
 		case Turn::black:
 			if (piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y] && piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]->getFlag() == Flag::black) {
 				gamestate.setSelectedPiece(piecemanager.getMasterArray()[controller.getInputPos().x][controller.getInputPos().y]);
-				gamestate.setStatus(Status::validPiece);
-			}
-			else {
-				gamestate.setSelectedPiece(nullptr);
-				gamestate.setStatus(Status::invalidPiece);
+				gamestate.setLoopStatus(LoopStatus::pieceSelected);
+				--counter;
 			}
 			break;
 		}
-
-	}
 }
 void GameManager::selectMove() {
-	while (gamestate.getStatus() != Status::validMove) {
-		if (gamestate.getStatus() == Status::invalidMove) {
-			invalidMoveMessage();
-		}
 		if (dynamic_cast<King*>(gamestate.getSelectedPiece())) {
 			auto selectedKing{ dynamic_cast<King*>(gamestate.getSelectedPiece()) };
-				controller.select();
-				selectedKing->setEndPos(controller.getInputPos());
-				if (selectedKing->isValid()) {
-					switch (selectedKing->getCastlingMove()) {
+			selectedKing->setEndPos(controller.getInputPos());
+			if (selectedKing->isValid()) {
+				switch (selectedKing->getCastlingMove()) {
 					int validMovesCounter{ 0 };
-					case CastlingMove::kingsideCastling:
-						for (std::size_t i = 0; i < 2; ++i) {
-							selectedKing->kingsideStepping();
-							piecemanager.triggerGlobalScan();
-							if (selectedKing->getCheckState()) {
-								selectedKing->undoMove();
-								selectedKing->resetCheck();
-								piecemanager.getOtherKing(selectedKing)->resetCheck();
-								gamestate.setStatus(Status::invalidMove);
-								break;
-							}
-							else {
-								++validMovesCounter;
-							}
-						}
-						if (validMovesCounter == 2) {
-							gamestate.addMove(gamestate.getSelectedPiece(), MoveType::kingsideCastling);
-							piecemanager.updateArray(gamestate.readMove());
-							selectedKing->resetCapture();
-							selectedKing->resetCastlingMove();
-							gamestate.setStatus(Status::validMove);
-						}
-						break;
-					case CastlingMove::queensideCastling:
-						for (std::size_t i = 0; i < 2; ++i) {
-							selectedKing->queensideStepping();
-							piecemanager.triggerGlobalScan();
-							if (selectedKing->getCheckState()) {
-								selectedKing->undoMove();
-								selectedKing->resetCheck();
-								piecemanager.getOtherKing(selectedKing)->resetCheck();
-								gamestate.setStatus(Status::invalidMove);
-								break;
-							}
-							else {
-								++validMovesCounter;
-							}
-						}
-						if (validMovesCounter == 2) {
-							gamestate.addMove(gamestate.getSelectedPiece(), MoveType::queensideCastling);
-							piecemanager.updateArray(gamestate.readMove());
-							selectedKing->resetCapture();
-							selectedKing->resetCastlingMove();
-							gamestate.setStatus(Status::validMove);
-						}
-						break;
-					case CastlingMove::other:
-						selectedKing->move();
+				case CastlingMove::kingsideCastling:               
+					for (std::size_t i = 0; i < 2; ++i) {
+						selectedKing->kingsideStepping();
 						piecemanager.triggerGlobalScan();
 						if (selectedKing->getCheckState()) {
 							selectedKing->undoMove();
+							selectedKing->resetCapture();
 							selectedKing->resetCheck();
 							piecemanager.getOtherKing(selectedKing)->resetCheck();
-							gamestate.setStatus(Status::invalidMove);
+							selectedKing->resetCastlingMove();
+							gamestate.setLoopStatus(LoopStatus::initial);
+							gamestate.setSelectedPiece(nullptr);
+							break;
 						}
 						else {
-							gamestate.addMove(gamestate.getSelectedPiece());
-							piecemanager.updateArray(gamestate.readMove());
-							selectedKing->resetCapture();
-							gamestate.setStatus(Status::validMove);
+							++validMovesCounter;
 						}
-						break;
 					}
+					if (validMovesCounter == 2) {
+						gamestate.addMove(gamestate.getSelectedPiece(), MoveType::kingsideCastling);
+						piecemanager.updateArray(gamestate.readMove());
+						selectedKing->resetCapture();
+						selectedKing->resetCastlingMove();
+						gamestate.setLoopStatus(LoopStatus::moveSelected);
+						gamestate.setSelectedPiece(nullptr);
+					}
+					break;
+				case CastlingMove::queensideCastling:
+					for (std::size_t i = 0; i < 2; ++i) {
+						selectedKing->queensideStepping();
+						piecemanager.triggerGlobalScan();
+						if (selectedKing->getCheckState()) {
+							selectedKing->undoMove();
+							selectedKing->resetCapture();
+							selectedKing->resetCheck();
+							piecemanager.getOtherKing(selectedKing)->resetCheck();
+							selectedKing->resetCastlingMove();
+							gamestate.setLoopStatus(LoopStatus::initial);
+							gamestate.setSelectedPiece(nullptr);
+							break;
+						}
+						else {
+							++validMovesCounter;
+						}
+					}
+					if (validMovesCounter == 2) {
+						gamestate.addMove(gamestate.getSelectedPiece(), MoveType::queensideCastling);
+						piecemanager.updateArray(gamestate.readMove());
+						selectedKing->resetCapture();
+						selectedKing->resetCastlingMove();
+						gamestate.setLoopStatus(LoopStatus::moveSelected);
+						gamestate.setSelectedPiece(nullptr);
+					}
+					break;
+				case CastlingMove::other:
+					selectedKing->move();
+					piecemanager.triggerGlobalScan();
+					if (selectedKing->getCheckState()) {
+						selectedKing->undoMove();
+						selectedKing->resetCapture();
+						selectedKing->resetCheck();
+						piecemanager.getOtherKing(selectedKing)->resetCheck();
+						gamestate.setLoopStatus(LoopStatus::initial);
+						gamestate.setSelectedPiece(nullptr);
+					}
+					else {
+						gamestate.addMove(gamestate.getSelectedPiece());
+						piecemanager.updateArray(gamestate.readMove());
+						selectedKing->resetCapture();
+						gamestate.setLoopStatus(LoopStatus::moveSelected);
+						gamestate.setSelectedPiece(nullptr);
+					}
+					break;
 				}
-				else {
-					gamestate.setStatus(Status::invalidMove);
-				}
+			}
+			else {
+				gamestate.setLoopStatus(LoopStatus::initial);
+				gamestate.setSelectedPiece(nullptr);
+			}
 		}
 		else {
-			controller.select();
 			gamestate.getSelectedPiece()->setEndPos(controller.getInputPos());
 			if (gamestate.getSelectedPiece()->isValid()) {
 				gamestate.getSelectedPiece()->move();
@@ -126,59 +113,102 @@ void GameManager::selectMove() {
 				gamestate.addMove(gamestate.getSelectedPiece());
 				piecemanager.updateArray(gamestate.readMove());
 				gamestate.getSelectedPiece()->resetCapture();
-				gamestate.setStatus(Status::validMove);
+				gamestate.setLoopStatus(LoopStatus::moveSelected);
+				gamestate.setSelectedPiece(nullptr);
 			}
 			else {
-				gamestate.setStatus(Status::invalidMove);
+				gamestate.setLoopStatus(LoopStatus::initial);
+				gamestate.setSelectedPiece(nullptr);
 			}
 		}
+}
+void GameManager::selectEvadingMove() {
+	gamestate.getSelectedPiece()->setEndPos(controller.getInputPos());
+	if (gamestate.getSelectedPiece()->isValid()) {
+		gamestate.getSelectedPiece()->move();
+		piecemanager.triggerGlobalScan();
+		if (!(getCheckedKing()->getCheckState())) {
+			gamestate.addMove(gamestate.getSelectedPiece());
+			piecemanager.updateArray(gamestate.readMove());
+			gamestate.getSelectedPiece()->resetCapture();
+			getCheckedKing()->resetCheck();
+			gamestate.setLoopStatus(LoopStatus::moveSelected);
+			gamestate.setSelectedPiece(nullptr);
+		}
+		else {
+			gamestate.getSelectedPiece()->undoMove();
+			gamestate.getSelectedPiece()->resetCapture();
+			piecemanager.getOtherKing(getCheckedKing())->resetCheck();
+			gamestate.setLoopStatus(LoopStatus::initial);
+			gamestate.setSelectedPiece(nullptr);
+		}
+	}
+	else {
+		gamestate.setLoopStatus(LoopStatus::initial);
+		gamestate.setSelectedPiece(nullptr);
 	}
 }
-const King* GameManager::getCheckedKing() {
-	switch (gamestate.getTurn()) {
-	case Turn::white:
-		auto checkedKing{ dynamic_cast<King*>(piecemanager.getMasterArray()[piecemanager.view_whiteKing().getPos().x][piecemanager.view_whiteKing().getPos().y]) };
-		if (checkedKing->getCheckState())
-			return checkedKing;
-		else
-			return nullptr;
+void GameManager::interpretSelection() {
+	char selectionLimit{ 1 };
+	switch (gamestate.getLoopStatus()) {
+	case LoopStatus::initial:
+		selectPiece(selectionLimit);
 		break;
-	case Turn::black:
-		auto checkedKing{ dynamic_cast<King*>(piecemanager.getMasterArray()[piecemanager.view_blackKing().getPos().x][piecemanager.view_blackKing().getPos().y]) };
-		if (checkedKing->getCheckState())
-			return checkedKing;
-		else
-			return nullptr;
+	case LoopStatus::pieceSelected:
+		selectPiece(selectionLimit);
+		if (selectionLimit > 0) {
+			selectMove();
+		}
 		break;
 	}
 }
 void GameManager::handleCheck() {
-	auto checkedKing{ getCheckedKing() };
-	do{
-	    selectPiece();
-		
-	} while (checkedKing->getCheckState());
-	
-}
-void GameManager::nextTurn() {
-	if (gamestate.getTurn() == Turn::white) {
-		gamestate.setTurn(Turn::black);
+	char selectionLimit{ 1 };
+	switch (gamestate.getLoopStatus()) {
+	case LoopStatus::initial:
+		selectPiece(selectionLimit);
+		break;
+	case LoopStatus::pieceSelected:
+		selectPiece(selectionLimit);
+		if (selectionLimit > 0) {
+			selectEvadingMove();
+		}
+		break;
 	}
-	else {
-		gamestate.setTurn(Turn::white);
+}
+King* GameManager::getCheckedKing() {
+	switch (gamestate.getTurn()) {
+	case Turn::white:
+		auto checkedKingWhite{ dynamic_cast<King*>(piecemanager.getMasterArray()[piecemanager.view_whiteKing().getPos().x][piecemanager.view_whiteKing().getPos().y]) };
+		if (checkedKingWhite->getCheckState())
+			return checkedKingWhite;
+		else
+			return nullptr;
+		break;
+	case Turn::black:
+		auto checkedKingBlack{ dynamic_cast<King*>(piecemanager.getMasterArray()[piecemanager.view_blackKing().getPos().x][piecemanager.view_blackKing().getPos().y]) };
+		if (checkedKingBlack->getCheckState())
+			return checkedKingBlack;
+		else
+			return nullptr;
+		break;
 	}
 }
 void GameManager::run() {
-	while (isStateValid()) {
+	while (gamestate.getState()) {
 		board.render();
-		if (getCheckedKing()) {
-			handleCheck();
+		while (gamestate.getLoopStatus() != LoopStatus::moveSelected) {
+			if (getCheckedKing()) {
+				controller.select();
+				handleCheck();
+			}
+			else {
+				controller.select();
+				interpretSelection();
+			}
 		}
-		else {
-			selectPiece();
-			selectMove();
-		}
-		board.writeBoard();
-		nextTurn();
 	}
+	board.writeBoard();
+	gamestate.nextTurn();
 }
+

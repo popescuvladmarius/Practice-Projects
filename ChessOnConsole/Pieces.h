@@ -7,7 +7,8 @@ class Piece {
 protected:
 	Pos pos{};
 	Pos endPos{};
-	Pos oldPos{ pos };
+	Pos oldPos{ pos };                //to be initialized oldPos in piecemanager just like pos in the initializer functions
+	Pos virtualPos{};
 	Flag flag{};
 	bool capture{ false };
 	bool moved{ false };
@@ -33,6 +34,7 @@ public:
 	void hasMovedOnce();
 	bool lock();
 	bool unlock();
+	virtual bool iterateVirtualBaseMove() = 0;
 	virtual bool isValid() = 0;
 	virtual bool checkScanner() = 0;
 	virtual ~Piece() = default;
@@ -46,6 +48,7 @@ public:
 	inline Pos captureRight();
 	inline Pos captureLeft();
 	void promotion();
+	bool iterateVirtualBaseMove() override;
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -61,6 +64,7 @@ public:
 	inline Pos getRightDownJump();
 	inline Pos getLeftUpJump();
 	inline Pos getLeftDownJump();
+	bool iterateVirtualBaseMove() override;
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -68,6 +72,7 @@ public:
 class Rook : public Piece {
 public:
 	Rook(const PieceManager& ref);
+	bool iterateVirtualBaseMove() override;
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -75,6 +80,7 @@ public:
 class Bishop : public Piece {
 public:
 	Bishop(const PieceManager& ref);
+	bool iterateVirtualBaseMove() override;
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -102,6 +108,7 @@ public:
 	void setCheck();
 	void resetCheck();
 	bool getCheckState() const;
+	bool iterateVirtualBaseMove() override;
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -109,6 +116,7 @@ public:
 class Queen : public Piece {
 public:
 	Queen(const PieceManager& ref);
+	bool iterateVirtualBaseMove() override;
 	bool isValid() override;
 	bool checkScanner() override;
 };

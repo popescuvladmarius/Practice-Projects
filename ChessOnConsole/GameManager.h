@@ -13,12 +13,13 @@ private:
 	Gamestate gamestate;
 	Board board;
 	RuleManager rules;
+
 public:
-	bool isStateValid();
-	void selectPiece();
+	void interpretSelection();
+	void selectPiece(char& counter);
 	void selectMove();
-	const King* getCheckedKing();
+	void selectEvadingMove();
+	King* getCheckedKing();
 	void handleCheck();
-	void nextTurn();
 	void run();
 };

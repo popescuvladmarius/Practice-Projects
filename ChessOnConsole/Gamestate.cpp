@@ -1,7 +1,26 @@
 #include "Gamestate.h"
 
+void Gamestate::resetLoopStatus() {
+	loopStatus = LoopStatus::initial;
+}
+LoopStatus Gamestate::getLoopStatus() {
+	return loopStatus;
+}
+void Gamestate::setLoopStatus(LoopStatus status) {
+	loopStatus = status;
+}
 Turn Gamestate::getTurn() const { return turn; }
 void Gamestate::setTurn(Turn input) { turn = input; }
+void Gamestate::nextTurn() {
+	if (turn == Turn::white) {
+		turn = Turn::black;
+		resetLoopStatus();
+	}
+	else {
+		turn = Turn::white;
+		resetLoopStatus();
+	}
+}
 void Gamestate::setSelectedPiece(Piece* piece) { selected_piece = piece; }
 Piece* Gamestate::getSelectedPiece() { return selected_piece; }
 void Gamestate::setState(bool input) { state = input; }

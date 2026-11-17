@@ -39,9 +39,15 @@ Pos Controller::getInputNormalized() {
 	return temp;
 }
 void Controller::select() {
-	input();
-	if (checkInput()) {
-		inputPos = getInputNormalized();
+	while (true) {
+		input();
+		if (checkInput()) {
+			inputPos = getInputNormalized();
+			break;
+		}
+		else {
+			std::cout << "Invalid input!" << '\n';
+		}
 	}
 }
 Pos Controller::getInputPos() const { return inputPos; }
