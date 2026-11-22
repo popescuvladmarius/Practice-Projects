@@ -21,5 +21,6 @@ public:
 	void selectEvadingMove();
 	King* getCheckedKing();
 	void handleCheck();
+	bool isCheckmate();
 	void run();
 };

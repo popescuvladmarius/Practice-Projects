@@ -7,16 +7,17 @@ class Piece {
 protected:
 	Pos pos{};
 	Pos endPos{};
-	Pos oldPos{ pos };                //to be initialized oldPos in piecemanager just like pos in the initializer functions
+	Pos oldPos;                //to be initialized oldPos in piecemanager just like pos in the initializer functions
 	Pos virtualPos{};
 	Flag flag{};
+	ActionType actionType;
 	bool capture{ false };
 	bool moved{ false };
 	bool locked{ false };
 	char graphics{};
 	const PieceManager& piece_ref;
 public:
-	Piece(const PieceManager& ref);
+	Piece(const PieceManager& ref, ActionType action);
 	Pos getPos() const;
 	Pos getOldPos() const;
 	void setPos(int x, int y);
@@ -32,6 +33,7 @@ public:
 	bool checkCapture() const;
 	void resetCapture();
 	void hasMovedOnce();
+	ActionType getActionType() const;
 	bool lock();
 	bool unlock();
 	virtual bool iterateVirtualBaseMove() = 0;

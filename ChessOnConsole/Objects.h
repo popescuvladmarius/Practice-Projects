@@ -56,6 +56,11 @@ enum class MoveType {
 	enpassant
 };
 
+enum class ActionType {
+	diffusal,
+	point
+};
+
 struct Move {
 	Pos move;
 	Pos oldPos;

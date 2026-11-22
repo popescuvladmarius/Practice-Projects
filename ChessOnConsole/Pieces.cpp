@@ -1,7 +1,7 @@
 #include "Pieces.h"
 #include "PieceManager.h"
 
-Piece::Piece(const PieceManager& ref) : piece_ref{ ref } {}
+Piece::Piece(const PieceManager& ref, ActionType action) : piece_ref{ ref }, actionType{ action } {}
 Pos Piece::getPos() const { return pos; }
 Pos Piece::getOldPos() const { return oldPos; }
 void Piece::setPos(int x, int y) { pos.x = x; pos.y = y; }
@@ -53,12 +53,15 @@ void Piece::didCapture() { capture = true; }
 bool Piece::checkCapture() const { return capture; }
 void Piece::resetCapture() { capture = false; }
 void Piece::hasMovedOnce() { moved = true; }
+ActionType Piece::getActionType() const {
+	return actionType;
+}
 void Piece::undoMove() {
 	pos = oldPos;
 	resetCapture();
 }
 
-Pawn::Pawn(const PieceManager& ref) : Piece{ ref } {}
+Pawn::Pawn(const PieceManager& ref) : Piece(ref, ActionType::point) {}
 inline Pos Pawn::forward() {
 	Pos temp{ pos };
 	temp.x += dir();
@@ -155,7 +158,7 @@ bool Pawn::checkScanner() {
 	}
 }
 
-Knight::Knight(const PieceManager& ref) : Piece{ ref } {}
+Knight::Knight(const PieceManager& ref) : Piece(ref, ActionType::point) {}
 inline Pos Knight::getUpRightJump() {
 	Pos temp{ pos };
 	temp.x += 2 * dir();
@@ -378,7 +381,7 @@ bool Knight::checkScanner() {
 	}
 }
 
-Rook::Rook(const PieceManager& ref) : Piece{ ref } {}
+Rook::Rook(const PieceManager& ref) : Piece(ref, ActionType::diffusal) {}
 bool Rook::isValid() {
 	if (isOnRow(pos, endPos)) {
 		if (isMoveValidOnRow(pos, endPos, piece_ref.getMasterArray(), this)) {
@@ -425,7 +428,7 @@ bool Rook::checkScanner() {
 	}
 }
 
-Bishop::Bishop(const PieceManager& ref) : Piece{ ref } {}
+Bishop::Bishop(const PieceManager& ref) : Piece(ref, ActionType::diffusal) {}
 bool Bishop::isValid() {
 	if (isOnLeftDiag(pos, endPos)) {
 		if (isMoveValidOnLeftDiag(pos, endPos, piece_ref.getMasterArray(), this)) {
@@ -472,7 +475,7 @@ bool Bishop::checkScanner() {
 	}
 }
 
-King::King(const PieceManager& ref) : Piece{ ref } {}
+King::King(const PieceManager& ref) : Piece(ref, ActionType::point) {}
 inline Pos King::forward() {
 	Pos temp{ pos };
 	temp.x += dir();
@@ -734,7 +737,7 @@ bool King::checkScanner() {
 	}
 }
 
-Queen::Queen(const PieceManager& ref) : Piece{ ref } {}
+Queen::Queen(const PieceManager& ref) : Piece(ref, ActionType::diffusal) {}
 bool Queen::isValid() {
 	if (isOnRow(pos, endPos)) {
 		if (isMoveValidOnRow(pos, endPos, piece_ref.getMasterArray(), this)) {

@@ -115,12 +115,6 @@ bool RuleManager::queensideCastingIsValid() {
 		break;
 	}
 }
-void RuleManager::addToWhiteCheckingPieceArray(Piece* piece) {
-	whiteCheckingPieces.push_back(piece);
-}
-void RuleManager::addToBlackCheckingPieceArray(Piece* piece) {
-	blackCheckingPieces.push_back(piece);
-}
 bool RuleManager::whiteCheckState() { 
 	checkStatus = CheckStatus::whiteChecked;
 	return whiteCheck; 

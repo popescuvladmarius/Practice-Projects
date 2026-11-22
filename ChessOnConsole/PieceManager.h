@@ -2,10 +2,14 @@
 #include <vector>
 #include <array>
 #include "Team.h"
+#include "PieceManager.h"
 #include "RuleManager.h"
+#include "Gamestate.h"
 
 class Pos;
 class Piece;
+class RuleManager;
+class Gamestate;
 
 class PieceManager {
 private:
@@ -32,6 +36,7 @@ private:
 		{"BlackPawns", 1}
 	};
 	RuleManager& rule_ref;
+	Gamestate& state_ref;
 	Team whites;
 	Team blacks;
 	std::vector<Piece*> whitePieces;
@@ -42,7 +47,7 @@ private:
 	void initializeBlacks();
 	void initializeArray();
 public:
-	PieceManager(RuleManager& ref);
+	PieceManager(RuleManager& ref, Gamestate& state);
 	std::vector<Piece*>& getWhiteVector();
 	std::vector<Piece*>& getBlackVector();
 	const King& view_whiteKing() const;
@@ -68,6 +73,6 @@ public:
 	void signalCheck(Piece* checkingPiece);
 	void triggerGlobalScan();
 	void triggerTeamScan(Turn turn);
-
+	void triggerHighVolumeCompute();
 	King* getOtherKing(King* selectedKing);
 };

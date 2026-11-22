@@ -1,6 +1,5 @@
 #pragma once
 #include "Pieces.h"
-#include "GameloopStateMachine.h"
 
 class Gamestate {
 private:
@@ -10,6 +9,8 @@ private:
 	Turn turn{ Turn::white };
 	Piece* selected_piece{ nullptr };
 	std::vector<Move> moveCollection;
+	std::vector<Piece*> whiteCheckingPieces;
+	std::vector<Piece*> blackCheckingPieces;
 public:
 	void resetLoopStatus();
 	LoopStatus getLoopStatus();
@@ -26,4 +27,6 @@ public:
 	void addMove(const Piece* const piece, MoveType move = MoveType::regular);
 	const Move& readMove();
 	const std::vector<Move>& getMoveCollection();
+	void addToWhiteCheckingPieceArray(Piece* piece);
+	void addToBlackCheckingPieceArray(Piece* piece);
 };

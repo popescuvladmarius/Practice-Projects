@@ -113,8 +113,8 @@ void PieceManager::initializeArray() {
 		}
 	}
 }
-PieceManager::PieceManager(RuleManager& ref) :
-	    rule_ref {ref},
+PieceManager::PieceManager(RuleManager& ref, Gamestate& state) :
+	    rule_ref {ref}, state_ref{state},
 		whites(*this),
 		blacks(*this)
 	{
@@ -176,11 +176,11 @@ PieceManager::PieceManager(RuleManager& ref) :
 		switch (checkingPiece->getFlag()) {
 		case Flag::white:
 			dynamic_cast<King*>(getMasterArray()[view_blackKing().getPos().x][view_blackKing().getPos().y])->setCheck();
-			rule_ref.addToWhiteCheckingPieceArray(checkingPiece);
+			state_ref.addToWhiteCheckingPieceArray(checkingPiece);
 			break;
 		case Flag::black:
 			dynamic_cast<King*>(getMasterArray()[view_whiteKing().getPos().x][view_whiteKing().getPos().y])->setCheck();
-			rule_ref.addToBlackCheckingPieceArray(checkingPiece);
+			state_ref.addToBlackCheckingPieceArray(checkingPiece);
 			break;
 		}
 	}

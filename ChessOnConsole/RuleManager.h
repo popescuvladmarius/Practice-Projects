@@ -18,8 +18,6 @@ private:
 	bool isWhiteQueensideCastlingPossible{ true };
 	bool isBlackKingsideCastlingPossible{ true };
 	bool isBlackQueensideCastlingPossible{ true };
-	std::vector<Piece*> whiteCheckingPieces;
-	std::vector<Piece*> blackCheckingPieces;
 public:
 	RuleManager(const PieceManager& piece, const Gamestate& state);
 	void whiteKingMoved();

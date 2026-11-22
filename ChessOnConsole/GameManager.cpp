@@ -194,6 +194,9 @@ King* GameManager::getCheckedKing() {
 		break;
 	}
 }
+bool GameManager::isCheckmate() {
+
+}
 void GameManager::run() {
 	while (gamestate.getState()) {
 		board.render();
