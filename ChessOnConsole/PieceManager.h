@@ -73,6 +73,5 @@ public:
 	void signalCheck(Piece* checkingPiece);
 	void triggerGlobalScan();
 	void triggerTeamScan(Turn turn);
-	void triggerHighVolumeCompute();
 	King* getOtherKing(King* selectedKing);
 };
