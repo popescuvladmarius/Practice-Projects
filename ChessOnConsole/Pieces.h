@@ -7,8 +7,9 @@ class Piece {
 protected:
 	Pos pos{};
 	Pos endPos{};
-	Pos oldPos;                //to be initialized oldPos in piecemanager just like pos in the initializer functions
+	Pos oldPos;                //to be initialized oldPos with pos in piecemanager just like pos in the initializer functions
 	Pos virtualPos{};
+	Pos cachedPos{};
 	Flag flag{};
 	ActionType actionType;
 	bool capture{ false };
@@ -34,9 +35,9 @@ public:
 	void resetCapture();
 	void hasMovedOnce();
 	ActionType getActionType() const;
-	bool lock();
-	bool unlock();
-	virtual bool iterateVirtualBaseMove() = 0;
+	void lock();
+	void unlock();
+	virtual std::vector<Pos> getBaseMovesIteration(Pos checkingPiecePos) = 0;
 	virtual bool isValid() = 0;
 	virtual bool checkScanner() = 0;
 	virtual ~Piece() = default;
@@ -50,7 +51,7 @@ public:
 	inline Pos captureRight();
 	inline Pos captureLeft();
 	void promotion();
-	bool iterateVirtualBaseMove() override;
+	std::vector<Pos> getBaseMovesIteration(Pos checkingPiecePos) override;
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -66,7 +67,7 @@ public:
 	inline Pos getRightDownJump();
 	inline Pos getLeftUpJump();
 	inline Pos getLeftDownJump();
-	bool iterateVirtualBaseMove() override;
+	std::vector<Pos> getBaseMovesIteration(Pos checkingPiecePos) override;
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -74,7 +75,7 @@ public:
 class Rook : public Piece {
 public:
 	Rook(const PieceManager& ref);
-	bool iterateVirtualBaseMove() override;
+	std::vector<Pos> getBaseMovesIteration(Pos checkingPiecePos) override;
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -82,7 +83,7 @@ public:
 class Bishop : public Piece {
 public:
 	Bishop(const PieceManager& ref);
-	bool iterateVirtualBaseMove() override;
+	std::vector<Pos> getBaseMovesIteration(Pos checkingPiecePos) override;
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -110,7 +111,7 @@ public:
 	void setCheck();
 	void resetCheck();
 	bool getCheckState() const;
-	bool iterateVirtualBaseMove() override;
+	std::vector<Pos> getBaseMovesIteration(Pos checkingPiecePos) override;
 	bool isValid() override;
 	bool checkScanner() override;
 };
@@ -118,7 +119,7 @@ public:
 class Queen : public Piece {
 public:
 	Queen(const PieceManager& ref);
-	bool iterateVirtualBaseMove() override;
+	std::vector<Pos> getBaseMovesIteration(Pos checkingPiecePos) override;
 	bool isValid() override;
 	bool checkScanner() override;
 };

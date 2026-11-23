@@ -84,8 +84,23 @@ inline Pos Pawn::captureLeft() {
 	--temp.y;
 	return temp;
 }
-bool Pawn::iterateVirtualBaseMove() {
-	
+void Pawn::promotion() {
+
+}
+std::vector<Pos> Pawn::getBaseMovesIteration(Pos checkingPiecePos) {
+	std::vector<Pos> basicMoves;
+	if (!piece_ref.getMasterArray()[forward().x][forward().y]) {
+		basicMoves.push_back(forward());
+	}
+	if (!moved && !(piece_ref.getMasterArray()[forwardDouble().x][forwardDouble().y] || piece_ref.getMasterArray()[forwardDouble().x - dir()][forwardDouble().y])) {
+		basicMoves.push_back(forwardDouble());
+	}
+	if (piece_ref.getMasterArray()[captureLeft().x][captureLeft().y] && piece_ref.getMasterArray()[captureLeft().x][captureLeft().y]->getFlag() != flag) {
+		basicMoves.push_back(captureLeft());
+	}
+	if (piece_ref.getMasterArray()[captureRight().x][captureRight().y] && piece_ref.getMasterArray()[captureRight().x][captureRight().y]->getFlag() != flag) {
+		basicMoves.push_back(captureRight());
+	}
 }
 bool Pawn::isValid() {
 	if (forward() == endPos) {
@@ -97,16 +112,8 @@ bool Pawn::isValid() {
 		}
 	}
 	if (forwardDouble() == endPos) {
-		if (flag == Flag::white && pos.x == 6) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x + 1][endPos.y]) {
-				return false;
-			}
-			else {
-				return true;
-			}
-		}
-		if (flag == Flag::black && pos.x == 1) {
-			if (piece_ref.getMasterArray()[endPos.x][endPos.y] && piece_ref.getMasterArray()[endPos.x - 1][endPos.y]) {
+		if (!moved) {
+			if (piece_ref.getMasterArray()[endPos.x][endPos.y] || piece_ref.getMasterArray()[endPos.x - dir()][endPos.y]) {
 				return false;
 			}
 			else {
@@ -206,6 +213,74 @@ inline Pos Knight::getLeftDownJump() {
 	temp.x -= dir();
 	temp.y -= 2;
 	return temp;
+}
+std::vector<Pos> Knight::getBaseMovesIteration(Pos checkingPiecePos) {
+	std::vector<Pos> basicMoves;
+	if (piece_ref.getMasterArray()[getUpRightJump().x][getUpRightJump().y]) {
+		if (piece_ref.getMasterArray()[getUpRightJump().x][getUpRightJump().y]->getFlag() != this->getFlag()) {
+			basicMoves.push_back(getUpRightJump());
+		}
+	}
+	else {
+		basicMoves.push_back(getUpRightJump());
+	}
+	if (piece_ref.getMasterArray()[getUpLeftJump().x][getUpLeftJump().y]) {
+		if (piece_ref.getMasterArray()[getUpLeftJump().x][getUpLeftJump().y]->getFlag() != this->getFlag()) {
+			basicMoves.push_back(getUpLeftJump());
+		}
+	}
+	else {
+		basicMoves.push_back(getUpLeftJump());
+	}
+	if (piece_ref.getMasterArray()[getDownRightJump().x][getDownRightJump().y]) {
+		if (piece_ref.getMasterArray()[getDownRightJump().x][getDownRightJump().y]->getFlag() != this->getFlag()) {
+			basicMoves.push_back(getDownRightJump());
+		}
+	}
+	else {
+		basicMoves.push_back(getDownRightJump());
+	}
+	if (piece_ref.getMasterArray()[getDownLeftJump().x][getDownLeftJump().y]) {
+		if (piece_ref.getMasterArray()[getDownLeftJump().x][getDownLeftJump().y]->getFlag() != this->getFlag()) {
+			basicMoves.push_back(getDownLeftJump());
+		}
+	}
+	else {
+		basicMoves.push_back(getDownLeftJump());
+	}
+	if (piece_ref.getMasterArray()[getRightUpJump().x][getRightUpJump().y]) {
+		if (piece_ref.getMasterArray()[getRightUpJump().x][getRightUpJump().y]->getFlag() != this->getFlag()) {
+			basicMoves.push_back(getRightUpJump());
+		}
+	}
+	else {
+		basicMoves.push_back(getRightUpJump());
+	}
+	if (piece_ref.getMasterArray()[getRightDownJump().x][getRightDownJump().y]) {
+		if (piece_ref.getMasterArray()[getRightDownJump().x][getRightDownJump().y]->getFlag() != this->getFlag()) {
+			basicMoves.push_back(getRightDownJump());
+		}
+	}
+	else {
+		basicMoves.push_back(getRightDownJump());
+	}
+	if (piece_ref.getMasterArray()[getLeftUpJump().x][getLeftUpJump().y]) {
+		if (piece_ref.getMasterArray()[getLeftUpJump().x][getLeftUpJump().y]->getFlag() != this->getFlag()) {
+			basicMoves.push_back(getLeftUpJump());
+		}
+	}
+	else {
+		basicMoves.push_back(getLeftUpJump());
+	}
+	if (piece_ref.getMasterArray()[getLeftDownJump().x][getLeftDownJump().y]) {
+		if (piece_ref.getMasterArray()[getLeftDownJump().x][getLeftDownJump().y]->getFlag() != this->getFlag()) {
+			basicMoves.push_back(getLeftDownJump());
+		}
+	}
+	else {
+		basicMoves.push_back(getLeftDownJump());
+	}
+	return basicMoves;
 }
 bool Knight::isValid() {
 	if (endPos == getUpRightJump()) {
@@ -382,6 +457,13 @@ bool Knight::checkScanner() {
 }
 
 Rook::Rook(const PieceManager& ref) : Piece(ref, ActionType::diffusal) {}
+std::vector<Pos> Rook::getBaseMovesIteration(Pos checkingPiecePos) {
+	if (isOnRow(pos, checkingPiecePos)) {
+		if (isMoveValidOnRow(pos, checkingPiecePos, piece_ref.getMasterArray(), this)) {
+
+		}
+	}
+}
 bool Rook::isValid() {
 	if (isOnRow(pos, endPos)) {
 		if (isMoveValidOnRow(pos, endPos, piece_ref.getMasterArray(), this)) {
@@ -545,6 +627,74 @@ CastlingMove King::getCastlingMove() {
 void King::setCheck() { check = true; }
 void King::resetCheck() { check = false; }
 bool King::getCheckState() const { return check; }
+std::vector<Pos> King::getBaseMovesIteration(Pos checkingPiecePos) {
+	std::vector<Pos> basicMoves;
+	if (piece_ref.getMasterArray()[forward().x][forward().y]) {
+		if (piece_ref.getMasterArray()[forward().x][forward().y]->getFlag() != flag) {
+			basicMoves.push_back(forward());
+		}
+	}
+	else {
+		basicMoves.push_back(forward());
+	}
+	if (piece_ref.getMasterArray()[backwards().x][backwards().y]) {
+		if (piece_ref.getMasterArray()[backwards().x][backwards().y]->getFlag() != flag) {
+			basicMoves.push_back(backwards());
+		}
+	}
+	else {
+		basicMoves.push_back(backwards());
+	}
+	if (piece_ref.getMasterArray()[right().x][right().y]) {
+		if (piece_ref.getMasterArray()[right().x][right().y]->getFlag() != flag) {
+			basicMoves.push_back(right());
+		}
+	}
+	else {
+		basicMoves.push_back(right());
+	}
+	if (piece_ref.getMasterArray()[left().x][left().y]) {
+		if (piece_ref.getMasterArray()[left().x][left().y]->getFlag() != flag) {
+			basicMoves.push_back(left());
+		}
+	}
+	else {
+		basicMoves.push_back(left());
+	}
+	if (piece_ref.getMasterArray()[up_right().x][up_right().y]) {
+		if (piece_ref.getMasterArray()[up_right().x][up_right().y]->getFlag() != flag) {
+			basicMoves.push_back(up_right());
+		}
+	}
+	else {
+		basicMoves.push_back(up_right());
+	}
+	if (piece_ref.getMasterArray()[up_left().x][up_left().y]) {
+		if (piece_ref.getMasterArray()[up_left().x][up_left().y]->getFlag() != flag) {
+			basicMoves.push_back(up_left());
+		}
+	}
+	else {
+		basicMoves.push_back(up_left());
+	}
+	if (piece_ref.getMasterArray()[down_right().x][down_right().y]) {
+		if (piece_ref.getMasterArray()[down_right().x][down_right().y]->getFlag() != flag) {
+			basicMoves.push_back(down_right());
+		}
+	}
+	else {
+		basicMoves.push_back(down_right());
+	}
+	if (piece_ref.getMasterArray()[down_left().x][down_left().y]) {
+		if (piece_ref.getMasterArray()[down_left().x][down_left().y]->getFlag() != flag) {
+			basicMoves.push_back(down_left());
+		}
+	}
+	else {
+		basicMoves.push_back(down_left());
+	}
+	return basicMoves;
+}
 bool King::isValid() {
 	if (endPos == forward()) {
 		if (piece_ref.getMasterArray()[endPos.x][endPos.y]) {

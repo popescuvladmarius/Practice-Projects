@@ -36,3 +36,9 @@ void Gamestate::addToWhiteCheckingPieceArray(Piece* piece) {
 void Gamestate::addToBlackCheckingPieceArray(Piece* piece) {
 	blackCheckingPieces.push_back(piece);
 }
+const std::vector<Piece*>& Gamestate::getWhiteCheckingPieces() {
+	return whiteCheckingPieces;
+}
+const std::vector<Piece*>& Gamestate::getBlackCheckingPieces() {
+	return blackCheckingPieces;
+}

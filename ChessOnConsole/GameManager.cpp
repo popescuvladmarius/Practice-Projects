@@ -195,13 +195,43 @@ King* GameManager::getCheckedKing() {
 	}
 }
 bool GameManager::isCheckmate() {
+	switch (gamestate.getTurn()) {
+	case Turn::white:
+		for (auto checkingPiece : gamestate.getWhiteCheckingPieces()) {
+			if (checkingPiece->getActionType() == ActionType::point) {
+				for (auto piece : piecemanager.getWhiteVector()) {
+					if () {
 
+					}
+				}
+			}
+			if (checkingPiece->getActionType() == ActionType::diffusal) {
+				for (auto piece : piecemanager.getWhiteVector()) {
+					if () {
+
+					}
+				}
+			}
+		}
+		if (gamestate.getSelectedPiece()->getActionType() == ActionType::diffusal) {
+			for (auto piece : piecemanager.getWhiteVector()) {
+				if () {
+
+				}
+			}
+		}
+		break;
+	case Turn::black:
+
+		break;
+	}
 }
 void GameManager::run() {
 	while (gamestate.getState()) {
 		board.render();
 		while (gamestate.getLoopStatus() != LoopStatus::moveSelected) {
 			if (getCheckedKing()) {
+				isCheckmate();
 				controller.select();
 				handleCheck();
 			}

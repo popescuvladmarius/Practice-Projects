@@ -29,4 +29,6 @@ public:
 	const std::vector<Move>& getMoveCollection();
 	void addToWhiteCheckingPieceArray(Piece* piece);
 	void addToBlackCheckingPieceArray(Piece* piece);
+	const std::vector<Piece*>& getWhiteCheckingPieces();
+	const std::vector<Piece*>& getBlackCheckingPieces();
 };

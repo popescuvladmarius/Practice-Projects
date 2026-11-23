@@ -133,6 +133,8 @@ PieceManager::PieceManager(RuleManager& ref, Gamestate& state) :
 	const Rook& PieceManager::view_whiteRook_right() const { return whites.getRook(1); }
 	const Rook& PieceManager::view_blackRook_left() const { return blacks.getRook(0); }
 	const Rook& PieceManager::view_blackRook_right() const { return blacks.getRook(1); }
+	const std::unordered_map<std::string, Pos>& PieceManager::getPieceMap() const { return pieceInitialPositions; }
+	const std::unordered_map<std::string, int>& PieceManager::getPawnMap() const { return pawnInitialPositions; }
 	const std::array<std::array<Piece*, 8>, 8>& PieceManager::getMasterArray() const { return masterArray; }
 	void PieceManager::updateArray(const Move& move) {
 		if (move.capture) {
@@ -223,4 +225,7 @@ PieceManager::PieceManager(RuleManager& ref, Gamestate& state) :
 			return dynamic_cast<King*>(getMasterArray()[view_whiteKing().getPos().x][view_whiteKing().getPos().y]);
 			break;
 		}
+	}
+	Piece* PieceManager::getSelectedPiece() {
+		return state_ref.getSelectedPiece();
 	}

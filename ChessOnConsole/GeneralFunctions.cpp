@@ -325,6 +325,25 @@ bool checkScanRightDiag(Pos pos, Pos kingPos, const std::array<std::array<Piece*
 		return false;
 	}
 }
+std::vector<Pos> getRowBaseMoveIterations(Pos pos, const std::array<std::array<Piece*, 8>, 8>& array, const Piece* const piece) {
+	std::vector<Pos> moves;
+	if (pos.y > 0) {
+		pos.y -= 1;
+		while (pos.y >= 0) {
+			if (!array[pos.x][pos.y]) {
+				moves.push_back(pos);
+			}
+			else if (array[pos.x][pos.y]->getFlag() != piece->getFlag()) {
+				moves.push_back(pos);
+				return moves;
+			}
+			else {
+				return moves;
+			}
+			--pos.y;
+		}
+	}
+}                        //to be discarded
 void invalidPieceMessage() {
 	std::cout << "Invalid Piece" << '\n' << "Select again" << '\n';
 }

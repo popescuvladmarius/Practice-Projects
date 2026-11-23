@@ -58,8 +58,8 @@ public:
 	const Rook& view_whiteRook_right() const;
 	const Rook& view_blackRook_left() const;
 	const Rook& view_blackRook_right() const;
-	const std::unordered_map<std::string, Pos>& getPieceMap() const { return pieceInitialPositions; }
-	const std::unordered_map<std::string, int>& getPawnMap() const { return pawnInitialPositions; }
+	const std::unordered_map<std::string, Pos>& getPieceMap() const;
+	const std::unordered_map<std::string, int>& getPawnMap() const;
 	const std::array<std::array<Piece*, 8>, 8>& getMasterArray() const;
 	void updateArray(const Move& move);
 	void notify_whiteKingMoved() const;
@@ -74,4 +74,5 @@ public:
 	void triggerGlobalScan();
 	void triggerTeamScan(Turn turn);
 	King* getOtherKing(King* selectedKing);
+	Piece* getSelectedPiece();
 };
