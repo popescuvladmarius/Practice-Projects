@@ -6,13 +6,13 @@
 #include <conio.h>
 #include "FunctionDeclarations.h"
 
-struct Pos {
+struct Pos {                
 	int x{};
 	int y{};
 	bool operator==(const Pos&) const = default;
 };
 
-enum Direction {
+enum Direction {              
 	none,
 	up,
 	down,
@@ -20,17 +20,17 @@ enum Direction {
 	right,
 };
 
-class Controller {
+class Controller {                   
 private:
-	Direction direction{ right };
-	Direction directionCheck{ direction };
-	Direction prevDirection{};
-	bool quitButton{ false };
+	Direction direction{ right };                  //current snake direction
+	Direction directionCheck{ direction };         //used to compare with direction to check if the direction has changed
+	Direction prevDirection{};                     //previous direction
+	bool quitButton{ false };                      //if true quits the game
 public:
 	Direction getDirection() const { return direction; }
 	Direction getPrevDirection() const { return prevDirection; }
 	bool getQuitState() const { return quitButton; }
-	void input() {
+	void input() {                                        //input() reads input from keybaord and assigns the proper direction
 		if (_kbhit()) {
 			switch (_getch()) {
 			case 'w':
@@ -71,7 +71,7 @@ public:
 			}
 		}
 	}
-	bool isDirectionChanged() {
+	bool isDirectionChanged() {                            //checks if the direction has changed
 		if (direction != directionCheck) {
 			prevDirection = directionCheck;
 			directionCheck = direction;
@@ -85,14 +85,14 @@ public:
 
 class Snake {
 private:
-	char snakeHead{ 'O' };
-	char snakeTail{ 'o' };
-	int snakeLength{};
-	Pos headPos{};
-	Pos tailPos{};
-	Pos trail{};
-	std::vector<Pos> cache{};
-	Controller* controller_ptr;
+	char snakeHead{ 'O' };                   //graphical representation of the head
+	char snakeTail{ 'o' };                   //graphical representation of the tail
+	int snakeLength{};                       //used to determine and increment the size of the snake
+	Pos headPos{};                            //position of the head
+	Pos tailPos{};                            //position of the tail
+	Pos trail{};                             //the trail acts like a temp value during cache updates
+	std::vector<Pos> cache{};                 //vector that caches the positions of the tail and used to check for collisions
+	Controller* controller_ptr;            
 public:
 	Snake(int length, Controller& controller) :
 		snakeLength{ clampLength(length) },
@@ -116,19 +116,19 @@ public:
 	const std::vector<Pos>& readCache() const {
 		return cache;
 	}
-	void addCache() {
+	void addCache() {                                  //adds a new tail to the cache
 		while (cache.size() < snakeLength) {
 			cache.push_back(getTailPosition());
 		}
 	}
-	void updateCache() {
+	void updateCache() {                                //updates the cache when a new element is added to the vector
 		trail = cache.back();
 		for (int i = cache.size() - 1; i > 0; --i) {
 			cache[i] = cache[i - 1];
 		}
 		cache[0] = tailPos;
 	}
-	void movement() {
+	void movement() {                                     //increments or decrements according to the direction the coordinates of the tail and head to direct movement and checks the bounds at each operation to ensure it stays inside the bounds
 		switch (controller_ptr->getDirection()) {
 		case up:
 			--headPos.x;
@@ -156,7 +156,7 @@ public:
 			break;
 		}
 	}
-	void movementCorrector() {
+	void movementCorrector() {                                      //performs an additional correction of the movement of the tail when the snake changes direction to ensure the tail follows the head properly
 		if (controller_ptr->isDirectionChanged()) {
 			switch (controller_ptr->getDirection()) {
 			case up:
@@ -230,8 +230,8 @@ public:
 
 class Board {
 private:
-	std::array<std::array<char, 20>, 20> board{};
-	char grass{ '*' };
+	std::array<std::array<char, 20>, 20> board{};                      //the game board is a 20x20 array of chars
+	char grass{ '*' };                                               //grass is a graphical representation of the empty space
 public:
 	Board() {
 		for (auto& row : board) {
@@ -265,14 +265,14 @@ private:
 	Pos foodPos{};
 public:
 	void spawnFood() {
-		foodPos.x = randomGen(0, 19);
+		foodPos.x = randomGen(0, 19);                          //food is randomly spawned in the array
 		foodPos.y = randomGen(0, 19);
 	}
 	Pos getFoodPosition() const { return foodPos; }
 	char getFoodGraphics() const { return food; }
 };
 
-class CollisionManager {
+class CollisionManager {                                  //the CollisionManager checks for all the possible collisions that might occur
 private:
 	const Snake* const snake_ptr;
 	const Food* const food_ptr;
@@ -280,15 +280,15 @@ public:
 	CollisionManager(const Snake& snake, const Food& food) :
 		snake_ptr{ &snake }, food_ptr{ &food }
 	{}
-	bool selfCollisionCheck() const{
-		for (const auto& a : snake_ptr->readCache()) {
+	bool selfCollisionCheck() const{                              //checks if the snake bites itself
+		for (const auto& a : snake_ptr->readCache()) {                
 			if (snake_ptr->getHeadPosition() == a) {
 				return true;
 			}
 		}
 		return false;
 	}
-	bool foodCollisionCheck() const {
+	bool foodCollisionCheck() const {                                             //checks if the snake eats food
 		if (snake_ptr->getHeadPosition() == food_ptr->getFoodPosition()) {
 			return true;
 		}
@@ -296,7 +296,7 @@ public:
 			return false;
 		}
 	}
-	bool foodSpawnCollisionCheck() const {
+	bool foodSpawnCollisionCheck() const {                               //checks if the food spawned at the location of the snake's body
 		for (const auto& a : snake_ptr->readCache()) {
 			if (food_ptr->getFoodPosition() == a) {
 				return true;
@@ -309,7 +309,7 @@ public:
 	}
 };
 
-class Gamestate {
+class Gamestate {                                        
 private:
 	bool gameover{ false };
 	const Snake* const snake_ptr;
@@ -322,7 +322,7 @@ public:
 		controller_ptr{ &controller }
 	{}
 	bool getGameState() { return gameover; }
-	void solveState() {
+	void solveState() {                                    //determines the state of the game
 		if (collision_ptr->selfCollisionCheck()) {
 			gameover = true;
 			std::cout << "Game Over!" << '\n';

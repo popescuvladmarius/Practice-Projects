@@ -46,7 +46,7 @@ void Controller::select() {
 			break;
 		}
 		else {
-			std::cout << "Invalid input!" << '\n';
+			std::cout << "Invalid input!" << '\n';              //this invalid input hanling is temporary, will be modified
 		}
 	}
 }
