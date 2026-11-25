@@ -89,10 +89,10 @@ private:
 	char snakeTail{ 'o' };                   //graphical representation of the tail
 	int snakeLength{};                       //used to determine and increment the size of the snake
 	Pos headPos{};                            //position of the head
-	Pos tailPos{};                            //position of the tail
-	Pos trail{};                             //the trail acts like a temp value during cache updates
+	Pos tailPos{};                            //the snake works only with one tailPos component. When the snake length increases the cache that stores the tail positions gets increased to keep track of more positions in the array that will be simply printed by the board as tails.
+	Pos trail{};                             //the trail represents the position in the array immediately after the last tail component and it's used to print the grass as the snake moves
 	std::vector<Pos> cache{};                 //vector that caches the positions of the tail and used to check for collisions
-	Controller* controller_ptr;            
+	Controller* controller_ptr;               
 public:
 	Snake(int length, Controller& controller) :
 		snakeLength{ clampLength(length) },
@@ -116,12 +116,12 @@ public:
 	const std::vector<Pos>& readCache() const {
 		return cache;
 	}
-	void addCache() {                                  //adds a new tail to the cache
+	void addCache() {                                  //adds a new tail to the cache when the snakeLength increases. The last element in the cache is the closest to the head.
 		while (cache.size() < snakeLength) {
 			cache.push_back(getTailPosition());
 		}
 	}
-	void updateCache() {                                //updates the cache when a new element is added to the vector
+	void updateCache() {                                //updates each tailPos in the cache as the snake moves so that it maintains consistent tail coordinates.
 		trail = cache.back();
 		for (int i = cache.size() - 1; i > 0; --i) {
 			cache[i] = cache[i - 1];
@@ -254,7 +254,7 @@ public:
 			std::cout << '\n';
 		}
 	}
-	void resetCursor() {
+	void resetCursor() {                         //moves the cursor of the console on the top left corner so that subsequent prints overlap the current representation in order to avoid printing always a separate board.
 		std::cout << "\x1B[H";
 	}
 };

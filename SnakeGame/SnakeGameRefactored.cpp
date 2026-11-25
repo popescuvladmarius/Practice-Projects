@@ -13,7 +13,6 @@ int main()
     foodSafeSpawn(food, collisionManager);
     while (!gamestate.getGameState()) {
         board.draw();
-        board.resetCursor();
         controller.input();
         snake.movement();
         snake.movementCorrector();
@@ -25,6 +24,7 @@ int main()
             foodSafeSpawn(food, collisionManager);
         }
         gamestate.solveState();
+        board.resetCursor();
         sleep();
     }
 
