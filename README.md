@@ -1,4 +1,4 @@
-#Practice Projects
+# Practice Projects
 
 A collection of personal projects developed in C++ 
 as part of my independent study and practice of programming,
