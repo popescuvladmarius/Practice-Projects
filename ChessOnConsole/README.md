@@ -54,7 +54,7 @@ The game employs a global coordinate system defined by the masterArray's coordin
 ## Check handling
 
 After a valid move has been performed, a scanning operation that searches if the enemy king is under check is fired. The scanning operation is fired for all pieces inside the current team, and silently sets the check flag of the enemy king during the current turn, if threatened by any piece. This process triggers all possible moves for each piece in the team and if one corresponds to the position of the enemy king, and the path is clear for range pieces, the check is signaled.<br> 
-At the start of each turn the current team's king is verified if under check, and if yes the checkmate evaluation is invoked. If it evaluates an escape for the king, the game loop is focused in enforcing moves that only make the king escape check. If the checkmate evaluation calculates no chances for the king, checkmate is signaled and the game is ended.<br>
+At the start of each turn the current team's king is verified if under check, and if yes the checkmate evaluation is invoked. If it evaluates an escape for the king, the game loop is focused in enforcing moves that only make the king escape check. If the checkmate evaluation calculates no chances for the king, checkmate is signaled and the game is ended. It also accounts for double check.<br>
 During the scanning operation, range pieces like rooks and bishops can lock enemy pieces in place for the next turn, if those stand between them and the king. This is done to prevent them from being moved next turn and expose the king to check.<br>
 If the selected piece for a move is a king, each move it performs is verified if it puts the king in danger, and undone if that move would trigger a check. In this situation a global scanning operation is performed instead of a local (team) one normally fired for any other piece. This one triggers all possible moves for all pieces in both teams, to cover both the situation in which the selected king might step in danger, and the situation in which a move of the current king might expose the enemy king to check.<br>
 The scanning operation works by signals that are thrown at each turn, it doesn't cache any positions.<br>
@@ -64,12 +64,20 @@ The scanning operation works by signals that are thrown at each turn, it doesn't
 The purpose of this process is to find at least one move that lifts the check. The evaluation first takes into account the action type of the checking pieces, which is either point or range. For point ones it checks if there are available safe positions for the king or any other piece in the team can capture the checking one. For ranged checking pieces, it additionally checks if any other piece can block its range.<br>
 These verifications are done by firing all possible moves of each piece in the team and find at least one move that either captures the threatening piece or blocks its range, and for the king a move that puts it to safety. These checks will be optimized by supplying each piece wuth the position of the checking ones and fire only moves that are relevant, like firing only that one that stands in the direction of the checking piece or not firing anything if it is too far away.<br>
 
+## Features still to be implemented
+
+The draw conditions must still be implemented. These include Stalemate, Threefold repetition, Fivefold repetition, 50 move rule, 75 move rule, Insufficient material draw and Mutual agreement draw.<br>
+The promotion and en passant special moves must still be implemented.<br>
+A configurable chess timer will be implemented for each team as well as losing on time condition.<br>
+Resignation mechanism will be added also.<br>
+
 ## Future additions 
 
-The game will be converted to a window application with 3D rendered pieces and table and a proper user interface. A save system will be built to save the current state of the match (or multiple matches with different slots);<br>
+The game will be converted to a window application with 3D rendered graphics and a proper user interface. A save system will be built to save the current state of the match (or multiple matches with different slots);<br>
 It will be ported to online matchmaking;<br>
+A scoring system will be added.<br>
 The long term goal is to build a solver chess engine as AI player. It will be built as a separate component;<br>
-As ideas come, they will be written here. The project is open and anyone can contribute.<br>
+As ideas come, they will be written here.<br>
 
 ## Improvements
 
